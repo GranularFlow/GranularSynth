@@ -33,11 +33,11 @@ void PlayerCursor::paint(Graphics& g) {
 void PlayerCursor::paintCursor(Graphics& g) {
     g.setColour(guiColour);
     //Cursor
-    g.fillRect(getCursorPositionInPixels() - 1, 0, 2, getHeight()-25);
-    // Ball
-    g.fillEllipse(static_cast<float>(getCursorPositionInPixels() - 10),
-                  static_cast<float>(getHeight() - 25),
-                  static_cast<float>(20), static_cast<float>(20)
+    g.fillRect(getCursorPositionInPixels() - 1, 0, 2, getHeight() - CURSOR_BALL_RADIUS);
+    // Ball, put Y to 2,25x radius, so that there is paddingfrom top and bottom
+    g.fillEllipse(static_cast<float>(getCursorPositionInPixels() - CURSOR_BALL_RADIUS),
+                  static_cast<float>(getHeight() - (CURSOR_BALL_RADIUS * 2.25)),
+                  static_cast<float>(CURSOR_BALL_RADIUS * 2), static_cast<float>(CURSOR_BALL_RADIUS*2)
                   );
 }
 
@@ -49,7 +49,7 @@ void PlayerCursor::paintGrainLength(Graphics& g) {
     if (true)
     {
         // Mirror
-        g.fillRect(getCursorPositionInPixels() - grainLength / 2, 0, grainLength, getHeight()-30);
+        g.fillRect(getCursorPositionInPixels() - grainLength / 2, 0, grainLength, getHeight()-CURSOR_BALL_RADIUS);
     }
     else if (false) {
         // Ordered forward

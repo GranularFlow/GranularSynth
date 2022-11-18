@@ -33,9 +33,12 @@ public:
     //void timerCallback() override;
     // Getters
 	int getNextGrainPosition();
+	int grainLengthAbs(int8);
 private:
+	// Grain
+	int previousGrainPosition;
 	// Cursor
 	PlayerCursor cursor;
 	// Settings
-	PlayerSettings settings;
+	PlayerSettings settings;	
 };

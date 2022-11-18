@@ -55,26 +55,29 @@ void PlayerSettings::resized() {
             FlexBox::JustifyContent::center
     };
 
-    addToFb(&fb, granularModeRadioBox, 0);
-    addToFb(&fb, runningModeRadioBox, 1);
-    addToFb(&fb, playModeRadioBox, 2);
+    auto minWidth = (getWidth() * 0.95) / 10;
+    auto minHeight = getHeight() * 0.8f;
 
-    addToFb(&fb, grainLengthKnob, 3);
-    addToFb(&fb, grainPitchKnob, 4);
-    addToFb(&fb, grainSpeedKnob, 5);
-    addToFb(&fb, generationSpeedKnob, 6);
-    addToFb(&fb, offsetKnob, 7);
+    Utils::addToFb(&fb, granularModeRadioBox, 0, minWidth, minHeight);
+    Utils::addToFb(&fb, runningModeRadioBox, 1, minWidth, minHeight);
+    Utils::addToFb(&fb, playModeRadioBox, 2, minWidth, minHeight);
 
-    addToFb(&fb, volumeKnob, 8);
-    addToFb(&fb, panKnob, 9);
+    Utils::addToFb(&fb, grainLengthKnob, 3, minWidth, minHeight);
+    Utils::addToFb(&fb, grainPitchKnob, 4, minWidth, minHeight);
+    Utils::addToFb(&fb, grainSpeedKnob, 5, minWidth, minHeight);
+    Utils::addToFb(&fb, generationSpeedKnob, 6, minWidth, minHeight);
+    Utils::addToFb(&fb, offsetKnob, 7, minWidth, minHeight);
 
-    fb.performLayout(getLocalBounds().toFloat());
+    Utils::addToFb(&fb, volumeKnob, 8, minWidth, minHeight);
+    Utils::addToFb(&fb, panKnob, 9, minWidth, minHeight);
+
+    fb.performLayout(getLocalBounds());
 }
 
-void PlayerSettings::addToFb(FlexBox* fb,Component& c, int8 order){
-    fb->items.add(FlexItem(c).withMinWidth((getWidth() * 0.95)/10).withMinHeight(getHeight() * 0.8f).withMargin(0).withOrder(order));
+int8 PlayerSettings::getGrainLength()
+{
+    return grainLengthKnob.getValue();
 }
-
 
 bool PlayerSettings::isPlayMode(PlayerSettings::PlayMode mode) {
     return (PlayerSettings::PlayMode)playModeRadioBox.getValue() == mode;

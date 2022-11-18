@@ -13,12 +13,11 @@
 GranularSynth::GranularSynth()
 {
     initGui();
+    addListeners();
+    initAudioBuffers(numBuffers);    
 
-    // init Buffers
-    for (size_t i = 0; i < 100; i++)
-    {
-        audioBuffer.add(new AudioBuffer<float>(2, 256));
-    }
+    granularSettings.playerCountNum.slider.setValue(playerCount);
+    granularSettings.playerCountNum.slider.setValue(playerSelected);
 }
 
 GranularSynth::~GranularSynth()
@@ -27,95 +26,75 @@ GranularSynth::~GranularSynth()
 }
 void GranularSynth::initGui()
 {
-    // Listeners
-    incDecButtonCursorCount.addListener(this);
-    incDecButtonSelectedPlayerId.addListener(this);
-    openAudioButton.addListener(this);
-
-    // Cursor count
-    incDecButtonCursorCount.addListener(this);
-    incDecButtonCursorCount.setValue(1);
-    incDecButtonCursorCount.setRange(1, 3, 1);
-    incDecButtonCursorCount.setSliderStyle(Slider::IncDecButtons);
-    incDecButtonCursorCount.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-
-    // Cursor count Label
-    cursorCountLabel.setFont(juce::Font(10.0f, juce::Font::bold));
-    cursorCountLabel.setText("COUNT", juce::dontSendNotification);
-    cursorCountLabel.setColour(juce::Label::textColourId, C_WHITE);
-    cursorCountLabel.setJustificationType(juce::Justification::centredTop);
-    cursorCountLabel.attachToComponent(&incDecButtonCursorCount, true);
-
-    // Selected Cursor
-    incDecButtonSelectedPlayerId.addListener(this);
-    incDecButtonSelectedPlayerId.setValue(1);
-    incDecButtonSelectedPlayerId.setRange(1, 3, 1);
-    incDecButtonSelectedPlayerId.setSliderStyle(Slider::IncDecButtons);
-    incDecButtonSelectedPlayerId.setTextBoxStyle(Slider::NoTextBox, true, 0, 0);
-
-    // Selected Cursor Label
-    selectedPlayerLabel.setFont(juce::Font(10.0f, juce::Font::bold));
-    selectedPlayerLabel.setText("PLAYER", juce::dontSendNotification);
-    selectedPlayerLabel.setColour(juce::Label::textColourId, C_WHITE);
-    selectedPlayerLabel.setJustificationType(juce::Justification::centredTop);
-    selectedPlayerLabel.attachToComponent(&incDecButtonSelectedPlayerId, true);
-
-    // Only to see
-    addAndMakeVisible(cursorCountLabel, 0);
-    addAndMakeVisible(selectedPlayerLabel, 0);
-    // Only to see
-    addAndMakeVisible(granularVisualiser, 1);
-    // Clickable
-    addAndMakeVisible(incDecButtonCursorCount, 2);
-    addAndMakeVisible(incDecButtonSelectedPlayerId, 2);
-    addAndMakeVisible(openAudioButton);
+    addAndMakeVisible(granularSettings, 0);
+    addAndMakeVisible(granularVisualiser, 1);    
 }
 
 inline void GranularSynth::paint(Graphics& g)
 {
     // Background
+    paintLogoOnce(g);
     g.fillAll(Colour::fromRGB(33, 33, 33));
 }
 
 void GranularSynth::resized()
 {
-    // Top GranularSynth settings
-    //int8 settingsHeight = 50;
+   
+    // Top GranularSynthSettings
+    int8 topSettingsHeight = 50;
 
-    // Settings buttons
-    cursorCountLabel.setBounds(getLocalBounds().withSize(40, 15));
-    incDecButtonCursorCount.setBounds(getLocalBounds().withTrimmedTop(15).withSize(40, 20));
-    // Settings buttons
-    selectedPlayerLabel.setBounds(getLocalBounds().withTrimmedLeft(getWidth() - 40).withSize(40, 15));
-    incDecButtonSelectedPlayerId.setBounds(getLocalBounds().withTrimmedLeft(getWidth() - 40).withTrimmedTop(15).withSize(40, 20));
+    granularSettings.setBounds(getLocalBounds().withTrimmedBottom(getHeight() - topSettingsHeight));
 
-    // AudioButton
-    openAudioButton.setBounds(getLocalBounds().withSize(50,25));
-    openAudioButton.setCentrePosition(getWidth() / 2, 25);
-
-
-    // Player = cursor + down settings
+    // Players
     for (int i = 0; i < granularPlayers.size(); i++)
     {
-        granularPlayers[i]->setBounds(getLocalBounds().withSize(getWidth(), getHeight() - 50));
-        granularPlayers[i]->setTopLeftPosition(0, 50);
+        granularPlayers[i]->setBounds(getLocalBounds().withTrimmedTop(topSettingsHeight));
     }
 
     // AudioVisualiser
-    granularVisualiser.setBounds(getLocalBounds().withSize(getWidth(), ((getHeight() - 50) / 2) - 30));
-    granularVisualiser.setTopLeftPosition(0, 50);
+    granularVisualiser.setBounds(getLocalBounds().withTrimmedTop(topSettingsHeight).withTrimmedBottom(((getHeight() - topSettingsHeight ) / 2) + (CURSOR_BALL_RADIUS * 2.5) ));
+}
+
+void GranularSynth::paintLogoOnce(Graphics& g)
+{
+    const Image logo = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("logo250.png"));
+    g.drawImage(logo, getLocalBounds().withSize(250, 50).toFloat());
+}
+void GranularSynth::addListeners() {
+    granularSettings.bufferNumKnob.slider.addListener(this);
+    granularSettings.openAudioButton.addListener(this);
+    granularSettings.playerSelectNum.slider.addListener(this);
+    granularSettings.playerCountNum.slider.addListener(this);    
 }
 
 void GranularSynth::removeListeners(){
-    incDecButtonCursorCount.removeListener(this);
-    incDecButtonSelectedPlayerId.removeListener(this);
-    openAudioButton.removeListener(this);
+    granularSettings.bufferNumKnob.slider.removeListener(this);
+    granularSettings.openAudioButton.removeListener(this);
+    granularSettings.playerSelectNum.slider.removeListener(this);
+    granularSettings.playerCountNum.slider.removeListener(this);
+}
+
+void GranularSynth::initAudioBuffers(int numberToInit) {
+    // init empty buffers
+    for (size_t i = 0; i < numberToInit; i++)
+    {
+        audioBuffers.add(new AudioBuffer<float>(2, 256));
+    }
+}
+
+void GranularSynth::clearAudioBuffers() {
+    audioBuffers.clear();
 }
 
 void GranularSynth::sliderValueChanged(Slider* slider)
 {
-    if (slider == &incDecButtonCursorCount)
+    if (slider == &granularSettings.bufferNumKnob.slider)
     {
+        clearAudioBuffers();
+        numBuffers = static_cast<int>(slider->getValue());
+        initAudioBuffers(numBuffers);
+    }
+    else if (slider == &granularSettings.playerCountNum.slider) {
         int8 val = static_cast<int8>(slider->getValue());
         if (val > getPlayerCount())
         {
@@ -125,9 +104,12 @@ void GranularSynth::sliderValueChanged(Slider* slider)
         {
             removePlayer();
         }
-        incDecButtonSelectedPlayerId.setValue(val);
+        playerSelected--;
+        // After adding, select this new player
+        granularSettings.playerSelectNum.slider.setValue(val);
     }
-    else if (slider == &incDecButtonSelectedPlayerId) {
+    else if(slider == &granularSettings.playerSelectNum.slider)
+    {
         int8 val = static_cast<int8>(slider->getValue());
 
         if (getPlayerCount() > val - 1)
@@ -143,7 +125,7 @@ void GranularSynth::sliderValueChanged(Slider* slider)
 
 void GranularSynth::buttonClicked(Button* buttonClicked)
 {
-    if (buttonClicked == &openAudioButton)
+    if (buttonClicked == &granularSettings.openAudioButton)
     {
         
 
@@ -151,8 +133,8 @@ void GranularSynth::buttonClicked(Button* buttonClicked)
 
         for (size_t i = 0; i < 100; i++)
         {
-            audioBuffer[i]->clear();
-            audioLoad.fillBuffer(*audioBuffer[i], 256);
+            audioBuffers[i]->clear();
+            audioLoad.fillBuffer(*audioBuffers[i], 256);
         }
 
         /*for (size_t i = 0; i < 100; i++)
@@ -163,7 +145,7 @@ void GranularSynth::buttonClicked(Button* buttonClicked)
             }
         }*/
 
-        granularVisualiser.setWaveForm(audioBuffer);
+        granularVisualiser.setWaveForm(audioBuffers);
         audioLoad.clear();
     }
 }
@@ -195,7 +177,30 @@ void GranularSynth::selectPlayer(int8 playerNumber) {
 
 void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
 {
+    if (currentAudioBufferId > audioBuffers.size() - 1) {
+        currentAudioBufferId = 0;
+    }
 
+    if (audioBuffers.size() < numBuffers || audioBuffers[currentAudioBufferId]->getNumChannels() != 2)
+    {
+        DBG("ERROR: Cannot get buffer");
+        return;
+    }
+
+    float outputSamples[256];
+
+    Array<int64> samplePositions;
+
+    // Get positions of each player grains
+    for (int id = 0; id < granularPlayers.size(); id++)
+    {
+        ;
+        samplePositions.add(granularPlayers[id]->getNextGrainPosition()); // add position of grain
+    }
+
+    currentAudioBufferId++;
+
+    /* DBG- leave
     if (offset > audioBuffer.size() - 1) {
         offset = 0;
     }
@@ -216,7 +221,7 @@ void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
             fill[j] = empty[j];
         }
     }
-    offset++;
+    */
 }
 
 int8 GranularSynth::getPlayerCount()

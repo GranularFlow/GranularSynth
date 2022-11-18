@@ -36,27 +36,31 @@ void GranularPlayer::paint(Graphics& g) {
 
 void GranularPlayer::resized()
 {
-    cursor.setBounds(getLocalBounds().withSize(getWidth(), getHeight() / 2));
-    cursor.setTopLeftPosition(0, 0);
-    
-    settings.setBounds(getLocalBounds().withSize(getWidth(), (getHeight() / 2)));
-    settings.setTopLeftPosition(0, (getHeight() / 2));
+    cursor.setBounds(getLocalBounds().withTrimmedBottom(getHeight() / 2));    
+    settings.setBounds(getLocalBounds().withTrimmedTop(getHeight() / 2));
 }
 
 int GranularPlayer::getNextGrainPosition()
 {
-    /*/auto tmpPosition = grainPosition;
+    int currentGrainPosition = previousGrainPosition;
+    auto step = 1; //TODO CALCULATE STEP from settings
 
     if (settings.isGranularMode(PlayerSettings::GranularMode::ORDER)) {
-        if (settings.getGrainLength() ) {
-            grainPosition++;
-        } else {
+        previousGrainPosition += step;
 
-        }
     } else if (settings.isGranularMode(PlayerSettings::GranularMode::REVERSED_ORDER)) {
-        grainPosition--;
+        previousGrainPosition -= step;
     }
-    */
-    return 1;
 
+    if (previousGrainPosition >= grainLengthAbs(settings.getGrainLength()))
+    {
+
+    }
+    
+    return currentGrainPosition;
+
+}
+
+int GranularPlayer::grainLengthAbs(int8 grainLengthPercent) {
+    return 1*grainLengthPercent;
 }

@@ -10,9 +10,14 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "./Constants.h"
+
+#include "../AudioLoad/AudioLoad.h"
+
 #include "GranularPlayer/GranularPlayer.h"
 #include "GranularVisualiser/GranularVisualiser.h"
-#include "../AudioLoad/AudioLoad.h"
+#include "GranularSettings/GranularSettings.h"
+
 
 class GranularSynth : public Component, public Slider::Listener, public Button::Listener
 {
@@ -24,11 +29,16 @@ public:
     void initGui();
     void paint(Graphics&) override;
 	void resized() override;
+    void paintLogoOnce(Graphics&);
     // Listeners
     void sliderValueChanged(Slider*) override;
     void buttonClicked(Button*) override;
+    void addListeners();
     void removeListeners();
     // Tools
+    void initAudioBuffers(int);
+    void clearAudioBuffers();
+    void addToFb(FlexBox*, Component&, int8);
     void prepareToPlay(double, int);
     void addNewPlayer();
     void removePlayer();
@@ -40,31 +50,23 @@ public:
 private:
     // Players    
 	OwnedArray<GranularPlayer> granularPlayers; //Owned array is similar to uniquePtr array
-
     // Visualiser
 	GranularVisualiser granularVisualiser;
-
     // Top settings
-    // CursorCount
-    Label cursorCountLabel;
-    Slider incDecButtonCursorCount;
-    int8 cursorCount = 1;
-    // SelectedCursor
-    Label selectedPlayerLabel;
-    Slider incDecButtonSelectedPlayerId;
-    int8 selectedCursor = 0;
+    GranularSettings granularSettings;    
 
-    int numBuffers = 10;
+    int8 playerCount = 1;
+    int8 playerSelected = 0;
+
     int bufferSize = 256;
     double sampleRate = 44100;
-
     // TMP
     // Load buffer from file
     //AudioLoad audioLoad;
-    TextButton openAudioButton {"OPEN"};
-    OwnedArray<AudioBuffer<float>> audioBuffer;
+    OwnedArray<AudioBuffer<float>> audioBuffers;
 
     // Buffer check
     bool waveFormWasSet = false;
-    int offset = 0;
+    int currentAudioBufferId = 0;
+    int numBuffers = NUM_BUFFERS;
 };

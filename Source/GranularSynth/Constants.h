@@ -17,6 +17,17 @@
 const int W_WIDTH = 1000;
 const int W_HEIGHT = 700;
 
+const int8 CURSOR_BALL_RADIUS = 10;
+
+// Font sizes
+const float T_S_SIZE = 10.f;
+const float T_M_SIZE = 12.f;
+const float T_MH_SIZE = 14.f;
+const float T_H_SIZE = 18.f;
+
+// BufferSize/Length for Synth
+const int8 NUM_BUFFERS = 100;
+
 // GranularPlayer enumToString
 const Array<String> GRANULAR_MODE = {"IN ORDER", "REVERSED ORDER", "PLAY FROM CENTER", "PLAY TO CENTER"};
 const Array<String> RUNNING_MODE = {"STATIC", "RUNNING"};
