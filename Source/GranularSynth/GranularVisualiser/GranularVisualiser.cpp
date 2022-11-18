@@ -35,6 +35,10 @@ void GranularVisualiser::paint(Graphics& g) {
 
         for (int i = 0; i < sampleCount; i+= step) {
             float y = yOffset + (yOffset * (-waveForm[i])); // 0 ; 200
+            if (y > 200 || y < 0)
+            {
+                y = yOffset;
+            }
             g.drawLine(index, y, index, yOffset, 2.0f); // Draw from peak to middle
             index++;
             if (i + step > sampleCount){

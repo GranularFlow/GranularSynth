@@ -16,18 +16,18 @@ class Knob : public Component, public Slider::Listener
 {
 public:
     // Class
-    Knob(String, Colour, int, int, int, int);
+    Knob(String, Colour, float, float, float, int);
     ~Knob();
     // GUI
     void paint(Graphics&) override;
     void resized() override;
     void sliderValueChanged(Slider*) override;
     // Getters
-    int8 getValue();
+    float getValue();
     // Public vars
     Slider slider{ Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::TextBoxBelow };
 private:
     String name;
     Colour guiColor;
-    int8 value = 50; // <0;100> [%]
+    float value = 0;
 };

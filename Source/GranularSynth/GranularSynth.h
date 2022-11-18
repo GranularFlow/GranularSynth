@@ -38,7 +38,6 @@ public:
     // Tools
     void initAudioBuffers(int);
     void clearAudioBuffers();
-    void addToFb(FlexBox*, Component&, int8);
     void prepareToPlay(double, int);
     void addNewPlayer();
     void removePlayer();

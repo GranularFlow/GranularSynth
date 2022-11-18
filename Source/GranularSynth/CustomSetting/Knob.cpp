@@ -10,7 +10,7 @@
 
 #include "Knob.h"
 
-Knob::Knob(String nameIn, Colour guiColorIn, int startRangIn, int endRangeIn, int stepIn, int defaultValue)
+Knob::Knob(String nameIn, Colour guiColorIn, float startRangIn, float endRangeIn, float stepIn, int defaultValue)
 {
     guiColor = guiColorIn;
     name = nameIn;
@@ -50,7 +50,7 @@ void Knob::sliderValueChanged(Slider* changedSlider)
     value = changedSlider->getValue();
 }
 
-int8 Knob::getValue()
+float Knob::getValue()
 {
     return value;
 }

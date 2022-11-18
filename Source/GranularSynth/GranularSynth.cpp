@@ -24,6 +24,7 @@ GranularSynth::~GranularSynth()
 {
     removeListeners();
 }
+
 void GranularSynth::initGui()
 {
     addAndMakeVisible(granularSettings, 0);
@@ -60,6 +61,7 @@ void GranularSynth::paintLogoOnce(Graphics& g)
     const Image logo = ImageFileFormat::loadFrom(BinaryData::logo250_png, BinaryData::logo250_pngSize);
     g.drawImageAt(logo, (50 - 36)/2, 7,false);
 }
+
 void GranularSynth::addListeners() {
     granularSettings.bufferNumKnob.slider.addListener(this);
     granularSettings.openAudioButton.addListener(this);
@@ -177,51 +179,73 @@ void GranularSynth::selectPlayer(int8 playerNumber) {
 
 void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
 {
+    int step = 3;
+
+
+    // two channel fill
+    int indexer = 0;
+
     if (currentAudioBufferId > audioBuffers.size() - 1) {
+        // Skip to the first buffer and continue
         currentAudioBufferId = 0;
     }
-
-    if (audioBuffers.size() < numBuffers || audioBuffers[currentAudioBufferId]->getNumChannels() != 2)
+    if (audioBuffers.size() < numBuffers)
     {
-        DBG("ERROR: Cannot get buffer");
+        DBG("ERROR: Cannot get buffer yet");
+        return;
+    }
+    if ( audioBuffers[currentAudioBufferId]->getNumChannels() < 2)
+    {
+        DBG("ERROR: Buffer doesnt have channels");
         return;
     }
 
-    float outputSamples[256];
+    float* fillL = bufferToFill.getWritePointer(0);
+    float* fillR = bufferToFill.getWritePointer(1);
+    const float* emptyL = audioBuffers[currentAudioBufferId]->getReadPointer(0);
+    const float* emptyR = audioBuffers[currentAudioBufferId]->getReadPointer(1);
 
-    Array<int64> samplePositions;
-
-    // Get positions of each player grains
-    for (int id = 0; id < granularPlayers.size(); id++)
+    for (int b = 0; b < bufferSize; b++)
     {
-        ;
-        samplePositions.add(granularPlayers[id]->getNextGrainPosition()); // add position of grain
+        if (indexer + step > bufferSize) {
+            // Skip to the next buffer
+            currentAudioBufferId++;
+            indexer = 0;
+        }
+        if (currentAudioBufferId > audioBuffers.size() - 1) {
+            // Skip to the first buffer and continue
+            currentAudioBufferId = 0;
+        }      
+
+        fillL[b] = (emptyL[indexer] > 1 || emptyL[indexer] < -1) ? 0 : emptyL[indexer];
+        fillR[b] = (emptyR[indexer] > 1 || emptyR[indexer] < -1) ? 0 : emptyR[indexer];
+
+        indexer += step;
     }
+    
+
+    
+
+
+    
+
+    Array<int64> grainPositions;
+    /*
+    // Loop through 1 buffer with 256 samples
+    for (size_t i = 0; i < bufferToFill.getNumSamples(); i++)
+    {
+        // Get positions of each grain
+        for (int id = 0; id < granularPlayers.size(); id++)
+        {
+            granularPlayers[id]->getNextGrainPosition(&grainPositions, numBuffers*bufferSize); // add position of grain
+        }
+    }*/
+
 
     currentAudioBufferId++;
 
-    /* DBG- leave
-    if (offset > audioBuffer.size() - 1) {
-        offset = 0;
-    }
 
-    if (audioBuffer.size() < 100 || audioBuffer[offset]->getNumChannels() != 2)
-    {
-        DBG("Wrong");
-        return;
-    }
-
-    for (size_t i = 0; i < 2; i++)
-    {
-        float * fill = bufferToFill.getWritePointer(i);
-        const float * empty = audioBuffer[offset]->getReadPointer(i);
-
-        for (size_t j = 0; j < 256; j++)
-        {
-            fill[j] = empty[j];
-        }
-    }
-    */
+    
 }
 
 int8 GranularSynth::getPlayerCount()

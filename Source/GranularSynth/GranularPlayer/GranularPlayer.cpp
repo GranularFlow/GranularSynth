@@ -11,13 +11,14 @@
 #include "GranularPlayer.h"
 
 GranularPlayer::GranularPlayer() {
-    //startTimerHz(1);
     Random& random = Random::getSystemRandom();
     Colour guiColor = Colour(static_cast<int8>(random.nextInt(256)),
                              static_cast<int8>(random.nextInt(256)),
                              static_cast<int8>(random.nextInt(256)));
     // Cursor
-    cursor.init(static_cast<int8>(random.nextInt(100)), guiColor);
+    int position = static_cast<int8>(random.nextInt(100));
+    cursor.init(position, guiColor);
+    previousGrainPosition = position;
 
     // Settings
     settings.setGuiColor(guiColor);
@@ -40,10 +41,26 @@ void GranularPlayer::resized()
     settings.setBounds(getLocalBounds().withTrimmedTop(getHeight() / 2));
 }
 
-int GranularPlayer::getNextGrainPosition()
+int GranularPlayer::calculateStep()
 {
-    int currentGrainPosition = previousGrainPosition;
-    auto step = 1; //TODO CALCULATE STEP from settings
+    int nextStep = 0;
+    nextStep+= settings.getGrainLength();
+    return 0;
+}
+
+void GranularPlayer::getNextGrainPosition(Array<int64>* positions,int64 totalSamples)
+{
+    // First add grain, then calculate next one
+
+    // For each grain player has, add it to the array
+    //for (size_t i = 0; i < length; i++)
+    //{
+    positions->add(previousGrainPosition);
+    //}
+
+    // Calculate next position
+
+    auto step = calculateStep(); //TODO CALCULATE STEP from settings
 
     if (settings.isGranularMode(PlayerSettings::GranularMode::ORDER)) {
         previousGrainPosition += step;
@@ -52,15 +69,13 @@ int GranularPlayer::getNextGrainPosition()
         previousGrainPosition -= step;
     }
 
-    if (previousGrainPosition >= grainLengthAbs(settings.getGrainLength()))
+    if (previousGrainPosition >= grainLengthMax(totalSamples, settings.getGrainLength()))
     {
 
     }
-    
-    return currentGrainPosition;
-
 }
 
-int GranularPlayer::grainLengthAbs(int8 grainLengthPercent) {
-    return 1*grainLengthPercent;
+int GranularPlayer::grainLengthMax(int64 totalSamples,int8 grainLengthPercent) {
+    return std::floor(totalSamples * ((float) grainLengthPercent / 100));
 }
+
