@@ -25,6 +25,7 @@ cmake-build-debug
 /x64/Debug/VST3/GranularSynth.pdb
 /x64/Debug/VST3/GranularSynth.vst3.recipe
 /x64/Debug/VST3/GranularSynth_VST3.log
+/x64/Debug/VST3/GranularSynth.ilk
 /x64/Debug/VST3/GranularSynth_VST3.vcxproj.FileListAbsolute.txt
 /x64/Debug/VST3/include_juce_audio_plugin_client_VST3.obj
 /x64/Debug/VST3/resources.res

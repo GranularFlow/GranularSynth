@@ -33,8 +33,8 @@ void GranularSynth::initGui()
 inline void GranularSynth::paint(Graphics& g)
 {
     // Background
-    paintLogoOnce(g);
     g.fillAll(Colour::fromRGB(33, 33, 33));
+    paintLogoOnce(g);   
 }
 
 void GranularSynth::resized()
@@ -57,8 +57,8 @@ void GranularSynth::resized()
 
 void GranularSynth::paintLogoOnce(Graphics& g)
 {
-    const Image logo = ImageFileFormat::loadFrom(File::getCurrentWorkingDirectory().getChildFile("logo250.png"));
-    g.drawImage(logo, getLocalBounds().withSize(250, 50).toFloat());
+    const Image logo = ImageFileFormat::loadFrom(BinaryData::logo250_png, BinaryData::logo250_pngSize);
+    g.drawImageAt(logo, (50 - 36)/2, 7,false);
 }
 void GranularSynth::addListeners() {
     granularSettings.bufferNumKnob.slider.addListener(this);
