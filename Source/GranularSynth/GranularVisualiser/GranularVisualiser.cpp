@@ -48,18 +48,18 @@ void GranularVisualiser::paint(Graphics& g) {
     }
 }
 
-void GranularVisualiser::setWaveForm(OwnedArray<AudioBuffer<float>>& bufferArray) {
+void GranularVisualiser::setWaveForm(AudioBuffer<float>& audioBuffer) {
+
     waveForm.clear();
-    for (int i = 0; i < bufferArray.size(); ++i) {
-        // fill channels with addresses;
-        float* channel = bufferArray[i]->getWritePointer(0);
-        for (int l = 0; l < 256; l++)
-        {
-            float sample = channel[l]; // creates copy of value
-            //DBG("float: " << sample);
-            waveForm.add(sample);
-        }                                
+
+    // Add only left channel
+    const float* channel = audioBuffer.getReadPointer(0);
+
+    for (int i = 0; i < audioBuffer.getNumSamples(); ++i) {
+        // copy its value for display
+        waveForm.add(channel[i]);
     }
+
     waveformSet = true;
     repaint();
 }

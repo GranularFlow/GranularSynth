@@ -58,7 +58,6 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     GranularSynth granularSynth;
-
 private:
     
     //==============================================================================

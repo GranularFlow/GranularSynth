@@ -24,7 +24,7 @@ public:
     void paint(Graphics& g) override;
     // Callbacks
     // Setters
-    void setWaveForm(OwnedArray<AudioBuffer<float>>&);
+    void setWaveForm(AudioBuffer<float>&);
 
 private:
     // Array of float*

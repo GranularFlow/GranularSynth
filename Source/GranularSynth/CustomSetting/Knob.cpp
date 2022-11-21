@@ -10,11 +10,13 @@
 
 #include "Knob.h"
 
-Knob::Knob(String nameIn, Colour guiColorIn, float startRangIn, float endRangeIn, float stepIn, int defaultValue)
+Knob::Knob(String nameIn, Colour guiColorIn, float startRangIn, float endRangeIn, float stepIn, float defaultValue)
 {
     guiColor = guiColorIn;
     name = nameIn;
+    value = defaultValue;
 
+    slider.addListener(this);
     slider.setRange(startRangIn, endRangeIn, stepIn);
     slider.setValue(defaultValue);
     slider.setColour(Slider::ColourIds::rotarySliderFillColourId, guiColorIn);
@@ -47,7 +49,14 @@ void Knob::resized()
 
 void Knob::sliderValueChanged(Slider* changedSlider)
 {
-    value = changedSlider->getValue();
+    //DBG("Knob::sliderValueChanged");
+
+    if (changedSlider == &slider)
+    {
+        //DBG("changedSlider " << name);
+        value = changedSlider->getValue();
+        //DBG("value" << value);
+    }    
 }
 
 float Knob::getValue()

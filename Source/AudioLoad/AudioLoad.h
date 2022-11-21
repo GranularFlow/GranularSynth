@@ -12,6 +12,6 @@ public:
     int64 samplePosition = 0;
     int64 totalSamples = 0;
 
-    void fillBuffer(AudioBuffer<float>&, int);    
+    void fillBuffer(AudioBuffer<float>&, int);
     void clear();
 };

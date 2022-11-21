@@ -15,6 +15,15 @@
 class PlayerCursor: public Component
 {
 public:
+
+    struct Listener
+    {
+        virtual void onValueChange(int8 newCursorPositionPercent) = 0;
+    };
+
+    void setListener(Listener* listenerPntrIn) { listenerPntr = listenerPntrIn; }
+    void removeListener() { listenerPntr = nullptr; }
+
     // Class
 	PlayerCursor();
     ~PlayerCursor();
@@ -25,18 +34,19 @@ public:
 	void paintGrainLength(Graphics& g);
 	void paintGrainPosition(Graphics& g);
     // Listeners
+    //void onValueChange(float) override;
     void mouseDrag(const MouseEvent&) override;
     void mouseDown(const MouseEvent&) override;
     void mouseUp(const MouseEvent&) override;
     // Getters
-	int getCursorPositionInPixels();
+    int getCursorPositionInPixels();
     // Setters
-	void setCursorPosition(int8 position);
+	void setCursorPosition(int8);
 	void setGuiColour(Colour colour);
 
 private:
+    Listener* listenerPntr = 0;
     Colour guiColour;
 	/* How far from start of buffer - x Position in % */
-	int8 cursorPosition = 0; // <0; 100> %
-
+    int8 cursorPosition = 0;
 };

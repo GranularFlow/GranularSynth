@@ -23,7 +23,7 @@ void AudioLoad::clear()
     totalSamples = 0;
 }
 
-void AudioLoad::fillBuffer(AudioBuffer<float>& bufferToFill, int numberToFill) {
+void AudioLoad::fillBuffer(AudioBuffer<float>& bufferToFill, int numSamplesToFill) {
     AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
 
@@ -31,19 +31,13 @@ void AudioLoad::fillBuffer(AudioBuffer<float>& bufferToFill, int numberToFill) {
 
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
 
+    int minFill=0;
+
     if (reader != nullptr)
     {
-        bufferToFill.setSize((int)reader->numChannels, (int)reader->lengthInSamples);
-        totalSamples = reader->lengthInSamples;
-        reader->read(&bufferToFill, 0, numberToFill, samplePosition, true, true);
-    }
-    /*for (int j = 0; j < 2; j++)
-    {   
-        for (int i = 0; i < 256; i++)
-        {
-            DBG("s: " << bufferToFill.getReadPointer(0)[i]);
-        }
-    }*/
-    samplePosition += numberToFill;
-    DBG("Sample: " << samplePosition);
+        minFill = (numSamplesToFill == -1 )? reader->lengthInSamples : numSamplesToFill;        
+        reader->read(&bufferToFill, 0, minFill, 0, true, true);
+    }     
+
+    samplePosition += minFill;
 }

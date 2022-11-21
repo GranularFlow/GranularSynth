@@ -56,8 +56,9 @@ public:
     float getGrainSpeed();
     int8 getGenerationSpeed();
     int8 getOffset();
-    int8 getVolum();
-    int getPan();
+    float getVolume();
+    float getPanR();
+    float getPanL();
     // Setters
     void setGuiColor(Colour colour);
 

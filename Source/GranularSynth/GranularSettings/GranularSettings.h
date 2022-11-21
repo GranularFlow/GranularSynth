@@ -17,23 +17,24 @@
 #include "../CustomSetting/RadioBox.h"
 #include "../CustomSetting/NumberSelect.h"
 
-class GranularSettings  : public Component
+class GranularSettings : public Component
 {
 public:
     // Class
     GranularSettings();
     ~GranularSettings() override;
     // GUI
+    void enablePlayers();
     void paint (Graphics&) override;
     void resized() override;
 
     // Buffer length - number of buffers to play from
-    NumberSelect bufferNumKnob{ "Num Buffers", N_MAGENTA ,1, 200, 1, 100 };
+    NumberSelect timeLengthNum{ "Length", N_MAGENTA ,1.0, 3.0, 0.1, 3.0 };
     // Open file button
     TextButton openAudioButton{ "Open File" };
     // Player settings
-    NumberSelect playerSelectNum{ "Select", N_AQUA, 1, 3, 1, 3 };
-    NumberSelect playerCountNum{ "Count", N_YELLOW, 1, 3, 1, 3 };
+    NumberSelect playerCountNum{ "Count", N_YELLOW, 0, 3, 1, 0 };
+    NumberSelect playerSelectNum{ "Select", N_AQUA, 0, 3, 1, 0 };
 
 private:
 

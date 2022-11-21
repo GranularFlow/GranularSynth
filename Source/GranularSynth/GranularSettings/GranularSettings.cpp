@@ -14,18 +14,27 @@
 //==============================================================================
 GranularSettings::GranularSettings()
 {
-    addAndMakeVisible(bufferNumKnob);
-    addAndMakeVisible(openAudioButton);
-    addAndMakeVisible(playerSelectNum);
-    addAndMakeVisible(playerCountNum);
-
-    bufferNumKnob.slider.setValue(100);
-    playerSelectNum.slider.setValue(1);
-    playerCountNum.slider.setValue(1);
+    addAndMakeVisible(timeLengthNum);
+    addAndMakeVisible(openAudioButton);  
+    addChildComponent(playerSelectNum);
+    addChildComponent(playerCountNum);
 }
 
 GranularSettings::~GranularSettings()
 {
+   
+}
+
+void GranularSettings::enablePlayers()
+{
+    // This prevents from creating players before file Load
+    playerCountNum.slider.setValue(1, sendNotification);
+    playerCountNum.slider.setRange(1, playerCountNum.slider.getMaximum(), playerCountNum.slider.getInterval());
+
+    playerSelectNum.slider.setValue(1, dontSendNotification);
+    playerSelectNum.slider.setRange(1, playerCountNum.slider.getMaximum(), playerCountNum.slider.getInterval());
+    playerSelectNum.setVisible(true);
+    playerCountNum.setVisible(true);
 }
 
 void GranularSettings::paint (Graphics& g)
@@ -45,7 +54,7 @@ void GranularSettings::resized()
 
     Utils::addToFb(&fb, openAudioButton, 0, 100, getHeight());
 
-    Utils::addToFb(&fb, bufferNumKnob, 1, 100, getHeight());
+    Utils::addToFb(&fb, timeLengthNum, 1, 100, getHeight());
     Utils::addToFb(&fb, playerCountNum, 2, 100, getHeight());
     Utils::addToFb(&fb, playerSelectNum, 3, 100, getHeight());
 

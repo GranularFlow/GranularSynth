@@ -43,7 +43,3 @@ void NumberSelect::paint(Graphics& g) {
 void NumberSelect::resized() {
     slider.setBounds(getLocalBounds().withTrimmedBottom(getHeight()/4).withTrimmedLeft(getWidth()*0.2).withTrimmedRight(getWidth() * 0.2).withTrimmedTop(getHeight() / 2));
 }
-
-int8 NumberSelect::getValue() {
-    return value;
-}

@@ -36,8 +36,10 @@ public:
     void addListeners();
     void removeListeners();
     // Tools
-    void initAudioBuffers(int);
-    void clearAudioBuffers();
+    void loadAudioIntoSamples();
+    int getNumTotalSamples();
+    void initAudioSamples(int);
+    void clearAudioSamples();
     void prepareToPlay(double, int);
     void addNewPlayer();
     void removePlayer();
@@ -53,19 +55,12 @@ private:
 	GranularVisualiser granularVisualiser;
     // Top settings
     GranularSettings granularSettings;    
-
-    int8 playerCount = 1;
-    int8 playerSelected = 0;
+    // Samples [channel][sample]
+    AudioBuffer<float> audioSamples {2, 256};
 
     int bufferSize = 256;
-    double sampleRate = 44100;
-    // TMP
-    // Load buffer from file
-    //AudioLoad audioLoad;
-    OwnedArray<AudioBuffer<float>> audioBuffers;
-
+    double sampleRate = 48000;
+    float maxPlayTime = 3.0; // 3s   
     // Buffer check
     bool waveFormWasSet = false;
-    int currentAudioBufferId = 0;
-    int numBuffers = NUM_BUFFERS;
 };

@@ -20,24 +20,32 @@
   ==============================================================================
 
 */
-class GranularPlayer : public Component
+class GranularPlayer : public Component, public PlayerCursor::Listener
 {
 public:
     // Class
-	GranularPlayer();
+	GranularPlayer(int);
 	~GranularPlayer() override;
     // GUI
 	void paint(Graphics& g) override;
 	void resized() override;
+	// Listeners
+	void onValueChange(int8) override;
     // Tools
 	int calculateStep();
+	int calculateAbsoluteCursorPosition(int8);
     // Getters
-	void getNextGrainPosition(Array<int64>*, int64);
-	int grainLengthMax(int64, int8);
+	int getAbsoluteCursorPosition();
+	int getNextGrainPosition();
+	int grainLengthMax();
+	PlayerSettings* getSettings();
 	// Setters
+
 private:
 	// Grain
-	int previousGrainPosition;
+	int absoluteCursorPosition;
+	int absoluteGrainPosition;
+	int totalSamples;
 	// Cursor
 	PlayerCursor cursor;
 	// Settings

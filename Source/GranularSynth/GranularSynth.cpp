@@ -14,10 +14,7 @@ GranularSynth::GranularSynth()
 {
     initGui();
     addListeners();
-    initAudioBuffers(numBuffers);    
-
-    granularSettings.playerCountNum.slider.setValue(playerCount);
-    granularSettings.playerCountNum.slider.setValue(playerSelected);
+    initAudioSamples(getNumTotalSamples());        
 }
 
 GranularSynth::~GranularSynth()
@@ -63,55 +60,80 @@ void GranularSynth::paintLogoOnce(Graphics& g)
 }
 
 void GranularSynth::addListeners() {
-    granularSettings.bufferNumKnob.slider.addListener(this);
     granularSettings.openAudioButton.addListener(this);
+    granularSettings.timeLengthNum.slider.addListener(this);
     granularSettings.playerSelectNum.slider.addListener(this);
-    granularSettings.playerCountNum.slider.addListener(this);    
+    granularSettings.playerCountNum.slider.addListener(this);
 }
 
 void GranularSynth::removeListeners(){
-    granularSettings.bufferNumKnob.slider.removeListener(this);
+    granularSettings.timeLengthNum.slider.removeListener(this);
     granularSettings.openAudioButton.removeListener(this);
     granularSettings.playerSelectNum.slider.removeListener(this);
     granularSettings.playerCountNum.slider.removeListener(this);
 }
 
-void GranularSynth::initAudioBuffers(int numberToInit) {
-    // init empty buffers
-    for (size_t i = 0; i < numberToInit; i++)
-    {
-        audioBuffers.add(new AudioBuffer<float>(2, 256));
-    }
+void GranularSynth::loadAudioIntoSamples()
+{
+    AudioLoad audioLoad;
+
+    audioSamples.setSize(2, getNumTotalSamples());
+
+    // DOCS: The contents of the buffer will initially be undefined, so use clear() to set all the samples to zero.        
+    audioSamples.clear();
+
+    // Fetch data to buffer
+    audioLoad.fillBuffer(audioSamples, getNumTotalSamples());
+
+    // Push into visualiser only one channel
+    granularVisualiser.setWaveForm(audioSamples);
+
+    // Check to start playing
+    waveFormWasSet = true;
+
+    // Get rid off audioLoader - otherwise causes crashes and leaks
+    audioLoad.clear();
 }
 
-void GranularSynth::clearAudioBuffers() {
-    audioBuffers.clear();
+int GranularSynth::getNumTotalSamples() {
+    // how long i want to play * current sample rate = numberOfSamples
+    // example 48 khz * 3s = 144 000 samples;
+    return maxPlayTime * sampleRate;
+}
+
+void GranularSynth::initAudioSamples(int numberToInit) {
+    audioSamples.setSize(2, numberToInit);
+}
+
+void GranularSynth::clearAudioSamples() {
+    audioSamples.clear();
 }
 
 void GranularSynth::sliderValueChanged(Slider* slider)
 {
-    if (slider == &granularSettings.bufferNumKnob.slider)
+    if (slider == &granularSettings.timeLengthNum.slider)
     {
-        clearAudioBuffers();
-        numBuffers = static_cast<int>(slider->getValue());
-        initAudioBuffers(numBuffers);
+        maxPlayTime = static_cast<int>(slider->getValue());
+        clearAudioSamples();
+        initAudioSamples(getNumTotalSamples());
     }
     else if (slider == &granularSettings.playerCountNum.slider) {
         int8 val = static_cast<int8>(slider->getValue());
+
         if (val > getPlayerCount())
         {
             addNewPlayer();
         }
-        else
+        else if (val < getPlayerCount())
         {
             removePlayer();
         }
-        playerSelected--;
+        
         // After adding, select this new player
         granularSettings.playerSelectNum.slider.setValue(val);
     }
     else if(slider == &granularSettings.playerSelectNum.slider)
-    {
+    {        
         int8 val = static_cast<int8>(slider->getValue());
 
         if (getPlayerCount() > val - 1)
@@ -128,27 +150,11 @@ void GranularSynth::sliderValueChanged(Slider* slider)
 void GranularSynth::buttonClicked(Button* buttonClicked)
 {
     if (buttonClicked == &granularSettings.openAudioButton)
-    {
-        
-
-        AudioLoad audioLoad;
-
-        for (size_t i = 0; i < 100; i++)
-        {
-            audioBuffers[i]->clear();
-            audioLoad.fillBuffer(*audioBuffers[i], 256);
-        }
-
-        /*for (size_t i = 0; i < 100; i++)
-        {
-            for (int j = 0; j < 256; j++)
-            {
-                DBG("ss: " << audioBuffer[i]->getReadPointer(0)[j]);
-            }
-        }*/
-
-        granularVisualiser.setWaveForm(audioBuffers);
-        audioLoad.clear();
+    {       
+        loadAudioIntoSamples();
+        // Create new player after loading
+        granularSettings.enablePlayers();
+        granularSettings.openAudioButton.setVisible(false);
     }
 }
 
@@ -163,7 +169,7 @@ void GranularSynth::prepareToPlay(double sampleRateIn, int bufferSizeIn) {
 
 void GranularSynth::addNewPlayer() {
     const MessageManagerLock mmLock;
-    granularPlayers.add(new GranularPlayer());
+    granularPlayers.add(new GranularPlayer(getNumTotalSamples()));
     addAndMakeVisible(granularPlayers.getLast(), 5);
     resized();
 }
@@ -179,73 +185,31 @@ void GranularSynth::selectPlayer(int8 playerNumber) {
 
 void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
 {
-    int step = 3;
-
-
-    // two channel fill
-    int indexer = 0;
-
-    if (currentAudioBufferId > audioBuffers.size() - 1) {
-        // Skip to the first buffer and continue
-        currentAudioBufferId = 0;
-    }
-    if (audioBuffers.size() < numBuffers)
+    if (!waveFormWasSet)
     {
-        DBG("ERROR: Cannot get buffer yet");
-        return;
-    }
-    if ( audioBuffers[currentAudioBufferId]->getNumChannels() < 2)
-    {
-        DBG("ERROR: Buffer doesnt have channels");
         return;
     }
 
-    float* fillL = bufferToFill.getWritePointer(0);
-    float* fillR = bufferToFill.getWritePointer(1);
-    const float* emptyL = audioBuffers[currentAudioBufferId]->getReadPointer(0);
-    const float* emptyR = audioBuffers[currentAudioBufferId]->getReadPointer(1);
+    float* fillChannelL = bufferToFill.getWritePointer(0);
+    float* fillChannelR = bufferToFill.getWritePointer(1);
 
-    for (int b = 0; b < bufferSize; b++)
+    const float* emptyChannelL = audioSamples.getReadPointer(0);
+    const float* emptyChannelR = audioSamples.getReadPointer(1);
+
+
+    for (int sampleId = 0; sampleId < bufferSize; sampleId++)
     {
-        if (indexer + step > bufferSize) {
-            // Skip to the next buffer
-            currentAudioBufferId++;
-            indexer = 0;
-        }
-        if (currentAudioBufferId > audioBuffers.size() - 1) {
-            // Skip to the first buffer and continue
-            currentAudioBufferId = 0;
-        }      
-
-        fillL[b] = (emptyL[indexer] > 1 || emptyL[indexer] < -1) ? 0 : emptyL[indexer];
-        fillR[b] = (emptyR[indexer] > 1 || emptyR[indexer] < -1) ? 0 : emptyR[indexer];
-
-        indexer += step;
-    }
-    
-
-    
-
-
-    
-
-    Array<int64> grainPositions;
-    /*
-    // Loop through 1 buffer with 256 samples
-    for (size_t i = 0; i < bufferToFill.getNumSamples(); i++)
-    {
-        // Get positions of each grain
-        for (int id = 0; id < granularPlayers.size(); id++)
+        float sampleL = 0;
+        float sampleR = 0;
+        for (GranularPlayer* player : granularPlayers)
         {
-            granularPlayers[id]->getNextGrainPosition(&grainPositions, numBuffers*bufferSize); // add position of grain
+            int samplePos = player->getNextGrainPosition();
+            sampleL += emptyChannelL[samplePos] * 2 * player->getSettings()->getVolume() * player->getSettings()->getPanL();
+            sampleR += emptyChannelR[samplePos] * 2 * player->getSettings()->getVolume() * player->getSettings()->getPanR();
         }
-    }*/
-
-
-    currentAudioBufferId++;
-
-
-    
+        fillChannelL[sampleId] = sampleL;
+        fillChannelR[sampleId] = sampleR;
+    }    
 }
 
 int8 GranularSynth::getPlayerCount()

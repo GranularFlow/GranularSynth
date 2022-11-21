@@ -16,7 +16,7 @@ class Knob : public Component, public Slider::Listener
 {
 public:
     // Class
-    Knob(String, Colour, float, float, float, int);
+    Knob(String, Colour, float, float, float, float);
     ~Knob();
     // GUI
     void paint(Graphics&) override;
@@ -25,7 +25,7 @@ public:
     // Getters
     float getValue();
     // Public vars
-    Slider slider{ Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::TextBoxBelow };
+    Slider slider { Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::TextBoxBelow };
 private:
     String name;
     Colour guiColor;

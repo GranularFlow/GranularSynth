@@ -76,7 +76,8 @@ void PlayerSettings::resized() {
 
 int8 PlayerSettings::getGrainLength()
 {
-    return grainLengthKnob.getValue();
+    //DBG("(int8)grainLengthKnob.getValue()"<< (int)grainLengthKnob.getValue());
+    return (int8)grainLengthKnob.getValue();
 }
 
 bool PlayerSettings::isPlayMode(PlayerSettings::PlayMode mode) {
@@ -89,6 +90,21 @@ bool PlayerSettings::isRunningMode(PlayerSettings::RunningMode mode) {
 
 bool PlayerSettings::isGranularMode(PlayerSettings::GranularMode mode) {
     return (PlayerSettings::GranularMode)granularModeRadioBox.getValue() == mode;
+}
+
+float PlayerSettings::getVolume()
+{
+    return (float)volumeKnob.getValue() / 100;
+}
+
+float PlayerSettings::getPanR()
+{
+    return  ((float)panKnob.getValue() / 100);
+}
+
+float PlayerSettings::getPanL()
+{
+    return 1 - ((float)panKnob.getValue() / 100);
 }
 
 void PlayerSettings::setGuiColor(Colour guiColourIn)

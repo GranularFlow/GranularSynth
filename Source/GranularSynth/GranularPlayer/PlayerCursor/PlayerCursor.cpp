@@ -19,8 +19,8 @@ PlayerCursor::~PlayerCursor()
 {
 }
 
-void PlayerCursor::init(int8 positionIn, Colour guiColourIn) {
-    setCursorPosition(positionIn);
+void PlayerCursor::init(int8 positionPercentIn, Colour guiColourIn) {
+    setCursorPosition(positionPercentIn);
     setGuiColour(guiColourIn);
 }
 
@@ -42,14 +42,13 @@ void PlayerCursor::paintCursor(Graphics& g) {
 }
 
 void PlayerCursor::paintGrainLength(Graphics& g) {
-    auto grainLength = 20;
     g.setColour(Colour::fromRGBA(255,255,255,100));
 
-    
+
     if (true)
     {
         // Mirror
-        g.fillRect(getCursorPositionInPixels() - grainLength / 2, 0, grainLength, getHeight()-CURSOR_BALL_RADIUS);
+        //g.fillRect(getCursorPositionInPixels() - grainLength / 2, 0, grainLength, getHeight()-CURSOR_BALL_RADIUS);
     }
     else if (false) {
         // Ordered forward
@@ -67,12 +66,13 @@ void PlayerCursor::paintGrainPosition(Graphics& g) {
 }
 
 int PlayerCursor::getCursorPositionInPixels() {
-    return (int) (cursorPosition * getWidth()) / 100;
+    int position = std::floor( ( cursorPosition/(float)100) * getWidth());
+    return (int)position;
 }
 
-void PlayerCursor::setCursorPosition(int8 positionIn)
+void PlayerCursor::setCursorPosition(int8 cursorPositionIn)
 {
-    cursorPosition = positionIn;
+    cursorPosition = cursorPositionIn;
     repaint();
 }
 
@@ -86,7 +86,8 @@ void PlayerCursor::mouseDrag(const MouseEvent& event)
 {
     if (event.x < getWidth() && event.x > 0)
     {
-        cursorPosition = (int8)((event.x * 100) / getWidth());
+        cursorPosition = (int8)((event.x * 100) /(float) getWidth());
+        listenerPntr->onValueChange(cursorPosition);
         repaint();
     }
 }
@@ -96,6 +97,7 @@ void PlayerCursor::mouseDown(const MouseEvent& event)
     if (event.x <= getWidth() && event.x >= 0)
     {
         cursorPosition = (int8)((event.x * 100) / getWidth());
+        listenerPntr->onValueChange(cursorPosition);
         repaint();
     }
 }

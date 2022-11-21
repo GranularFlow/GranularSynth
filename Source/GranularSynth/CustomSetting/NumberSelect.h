@@ -21,12 +21,9 @@ public:
     // GUI
     void paint(Graphics&) override;
     void resized() override;
-    // Getters
-    int8 getValue();
     // Public vars
     Slider slider{ Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove};
 private:
     String name;
     Colour guiColor;
-    int8 value = 50; // <0;100> [%]
 };

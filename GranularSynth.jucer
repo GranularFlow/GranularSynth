@@ -6,65 +6,68 @@
   <MAINGROUP id="burg7H" name="GranularSynth">
     <GROUP id="{23605F32-A499-0F59-37AF-F197DB7A76C3}" name="Source">
       <GROUP id="{C3E121C5-2CF5-65FC-929B-A0B6AB43CBEE}" name="AudioLoad">
-        <FILE id="ZwJ6zu" name="AudioLoad.cpp" compile="1" resource="0" file="Source/AudioLoad/AudioLoad.cpp"/>
-        <FILE id="whq7Us" name="AudioLoad.h" compile="0" resource="0" file="Source/AudioLoad/AudioLoad.h"/>
+        <FILE id="eqkitZ" name="AudioLoad.cpp" compile="1" resource="0" file="Source/AudioLoad/AudioLoad.cpp"/>
+        <FILE id="lb22Mc" name="AudioLoad.h" compile="0" resource="0" file="Source/AudioLoad/AudioLoad.h"/>
       </GROUP>
       <GROUP id="{6216BDE6-8DD9-67D0-09C3-F93C0EF4502C}" name="GranularSynth">
         <GROUP id="{7F391BFB-B1F1-1AE4-A653-4960B78C2016}" name="CustomSetting">
-          <FILE id="eBDRvU" name="Knob.cpp" compile="1" resource="0" file="Source/GranularSynth/CustomSetting/Knob.cpp"/>
-          <FILE id="eZUaL1" name="Knob.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/Knob.h"/>
-          <FILE id="Lrmevx" name="NumberSelect.cpp" compile="1" resource="0"
+          <FILE id="AlC1PS" name="DropDownSelect.cpp" compile="1" resource="0"
+                file="Source/GranularSynth/CustomSetting/DropDownSelect.cpp"/>
+          <FILE id="ebnyc3" name="DropDownSelect.h" compile="0" resource="0"
+                file="Source/GranularSynth/CustomSetting/DropDownSelect.h"/>
+          <FILE id="ly1dok" name="Knob.cpp" compile="1" resource="0" file="Source/GranularSynth/CustomSetting/Knob.cpp"/>
+          <FILE id="lxfRyq" name="Knob.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/Knob.h"/>
+          <FILE id="dotjz0" name="NumberSelect.cpp" compile="1" resource="0"
                 file="Source/GranularSynth/CustomSetting/NumberSelect.cpp"/>
-          <FILE id="t8lrEx" name="NumberSelect.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/NumberSelect.h"/>
-          <FILE id="zNHpGZ" name="RadioBox.cpp" compile="1" resource="0" file="Source/GranularSynth/CustomSetting/RadioBox.cpp"/>
-          <FILE id="xxbZLo" name="RadioBox.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/RadioBox.h"/>
+          <FILE id="dvHydm" name="NumberSelect.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/NumberSelect.h"/>
+          <FILE id="LTZiqB" name="RadioBox.cpp" compile="1" resource="0" file="Source/GranularSynth/CustomSetting/RadioBox.cpp"/>
+          <FILE id="pZFfmH" name="RadioBox.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/RadioBox.h"/>
         </GROUP>
         <GROUP id="{F6FF7E6C-2E35-C97B-E633-2BF8BBDA6DC8}" name="GranularPlayer">
           <GROUP id="{9308C7D4-F697-5189-5599-3D05C8DFADD5}" name="PlayerCursor">
-            <FILE id="loF3A5" name="PlayerCursor.cpp" compile="1" resource="0"
+            <FILE id="AEbH0v" name="PlayerCursor.cpp" compile="1" resource="0"
                   file="Source/GranularSynth/GranularPlayer/PlayerCursor/PlayerCursor.cpp"/>
-            <FILE id="QoaeFI" name="PlayerCursor.h" compile="0" resource="0" file="Source/GranularSynth/GranularPlayer/PlayerCursor/PlayerCursor.h"/>
+            <FILE id="m6dYPT" name="PlayerCursor.h" compile="0" resource="0" file="Source/GranularSynth/GranularPlayer/PlayerCursor/PlayerCursor.h"/>
           </GROUP>
           <GROUP id="{EC53A9D1-A20B-F22B-148C-3C9C3E2A317B}" name="PlayerSettings">
-            <FILE id="AlhIOG" name="PlayerSettings.cpp" compile="1" resource="0"
+            <FILE id="KJMPzx" name="PlayerSettings.cpp" compile="1" resource="0"
                   file="Source/GranularSynth/GranularPlayer/PlayerSettings/PlayerSettings.cpp"/>
-            <FILE id="f2O0Qt" name="PlayerSettings.h" compile="0" resource="0"
+            <FILE id="RtYvaV" name="PlayerSettings.h" compile="0" resource="0"
                   file="Source/GranularSynth/GranularPlayer/PlayerSettings/PlayerSettings.h"/>
           </GROUP>
-          <FILE id="f0UZT3" name="GranularPlayer.cpp" compile="1" resource="0"
+          <FILE id="XxxTq1" name="GranularPlayer.cpp" compile="1" resource="0"
                 file="Source/GranularSynth/GranularPlayer/GranularPlayer.cpp"/>
-          <FILE id="KUW7LY" name="GranularPlayer.h" compile="0" resource="0"
+          <FILE id="I6QLXo" name="GranularPlayer.h" compile="0" resource="0"
                 file="Source/GranularSynth/GranularPlayer/GranularPlayer.h"/>
         </GROUP>
         <GROUP id="{C09C3B25-7710-8639-8BE3-7B678E575717}" name="GranularSettings">
-          <FILE id="ZmtK9o" name="GranularSettings.cpp" compile="1" resource="0"
+          <FILE id="FSlN4T" name="GranularSettings.cpp" compile="1" resource="0"
                 file="Source/GranularSynth/GranularSettings/GranularSettings.cpp"/>
-          <FILE id="sHl0VU" name="GranularSettings.h" compile="0" resource="0"
+          <FILE id="RFRIDi" name="GranularSettings.h" compile="0" resource="0"
                 file="Source/GranularSynth/GranularSettings/GranularSettings.h"/>
-          <FILE id="IwUceL" name="logo250.png" compile="0" resource="1" file="Source/GranularSynth/GranularSettings/logo250.png"
-                xcodeResource="1"/>
+          <FILE id="qOdatC" name="logo250.png" compile="0" resource="1" file="Source/GranularSynth/GranularSettings/logo250.png"/>
         </GROUP>
         <GROUP id="{88830733-DF60-4360-6388-C55AEE503DA7}" name="GranularVisualiser">
-          <FILE id="Bc4o2T" name="GranularVisualiser.cpp" compile="1" resource="0"
+          <FILE id="jGmXEl" name="GranularVisualiser.cpp" compile="1" resource="0"
                 file="Source/GranularSynth/GranularVisualiser/GranularVisualiser.cpp"/>
-          <FILE id="g65RdR" name="GranularVisualiser.h" compile="0" resource="0"
+          <FILE id="LQffw6" name="GranularVisualiser.h" compile="0" resource="0"
                 file="Source/GranularSynth/GranularVisualiser/GranularVisualiser.h"/>
         </GROUP>
         <GROUP id="{6ACC2871-790F-B617-3CDF-3C0D3EC03EFD}" name="Utils">
-          <FILE id="EvtkZT" name="Utils.cpp" compile="1" resource="0" file="Source/GranularSynth/Utils/Utils.cpp"/>
-          <FILE id="NJB3vK" name="Utils.h" compile="0" resource="0" file="Source/GranularSynth/Utils/Utils.h"/>
+          <FILE id="pYMfcI" name="Utils.cpp" compile="1" resource="0" file="Source/GranularSynth/Utils/Utils.cpp"/>
+          <FILE id="iy1z0K" name="Utils.h" compile="0" resource="0" file="Source/GranularSynth/Utils/Utils.h"/>
         </GROUP>
-        <FILE id="SL2SfC" name="Constants.h" compile="0" resource="0" file="Source/GranularSynth/Constants.h"/>
-        <FILE id="kbtx1D" name="GranularSynth.cpp" compile="1" resource="0"
+        <FILE id="HkbqRE" name="Constants.h" compile="0" resource="0" file="Source/GranularSynth/Constants.h"/>
+        <FILE id="LVjlVf" name="GranularSynth.cpp" compile="1" resource="0"
               file="Source/GranularSynth/GranularSynth.cpp"/>
-        <FILE id="Y03Y94" name="GranularSynth.h" compile="0" resource="0" file="Source/GranularSynth/GranularSynth.h"/>
+        <FILE id="tXTWG5" name="GranularSynth.h" compile="0" resource="0" file="Source/GranularSynth/GranularSynth.h"/>
       </GROUP>
-      <FILE id="DgUCVG" name="PluginEditor.cpp" compile="1" resource="0"
+      <FILE id="LJvFTP" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
-      <FILE id="WOrIEX" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
-      <FILE id="XUGcNb" name="PluginProcessor.cpp" compile="1" resource="0"
+      <FILE id="PQJ53y" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="U8c3Du" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="vOAGNP" name="PluginProcessor.h" compile="0" resource="0"
+      <FILE id="R2lC7U" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
     </GROUP>
   </MAINGROUP>
