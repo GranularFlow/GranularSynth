@@ -14,7 +14,7 @@
 #include <JuceHeader.h>
 
 //
-const int W_WIDTH = 1000;
+const int W_WIDTH = 1200;
 const int W_HEIGHT = 700;
 
 const int8 CURSOR_BALL_RADIUS = 10;
@@ -40,7 +40,12 @@ const Array<String> PLAY_MODE = {"CONTINUOUS", "TRIGGERED"};
 const Colour C_WHITE = Colours::white;
 const Colour C_SMOKE = Colours::whitesmoke;
 const Colour C_DARK = Colour::fromRGB(33,33,33);
+const Colour C_GRAY = Colour::fromRGB(40, 40, 40);
 const Colour C_TRANSPARENT = Colour::fromRGBA(0, 0, 0, 0);
+const Colour M_DARK = Colour::fromRGBA(0, 0, 0, 50);
+const Colour M_LIGHT = Colour::fromRGBA(255, 255, 255, 50);
+const Colour M_T_LIGHT = Colour::fromRGBA(255, 255, 255, 25);
+
 // Light colours
 const Colour L_GREEN = Colour::fromRGB(170, 212, 0);
 const Colour L_AQUA = Colour::fromRGB(121, 186, 175);

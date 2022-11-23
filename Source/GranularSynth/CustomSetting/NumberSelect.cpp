@@ -11,9 +11,10 @@
 #include "NumberSelect.h"
 
 NumberSelect::NumberSelect(String nameIn, Colour guiColorIn, int startRangeIn, int endRangeIn, int stepIn, int initialValue) {
+    setLookAndFeel(&customLook);
+
     guiColor = guiColorIn;
     name = nameIn;
-
     // Number selector
     slider.setValue(initialValue);
     slider.setRange(startRangeIn, endRangeIn, stepIn);
@@ -28,8 +29,13 @@ NumberSelect::NumberSelect(String nameIn, Colour guiColorIn, int startRangeIn, i
     addAndMakeVisible(slider);
 }
 
-NumberSelect::~NumberSelect() {}
+NumberSelect::~NumberSelect() {
+    setLookAndFeel(nullptr);
+}
 
+void NumberSelect::clearTop() {
+    guiColor = C_TRANSPARENT;
+}
 
 void NumberSelect::paint(Graphics& g) {
     // Top colour

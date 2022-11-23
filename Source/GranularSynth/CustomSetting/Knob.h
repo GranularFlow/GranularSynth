@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "../Constants.h"
+#include "CustomLook.h"
 
 class Knob : public Component, public Slider::Listener
 {
@@ -27,6 +28,7 @@ public:
     // Public vars
     Slider slider { Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::TextBoxBelow };
 private:
+    CustomLook customLook;
     String name;
     Colour guiColor;
     float value = 0;

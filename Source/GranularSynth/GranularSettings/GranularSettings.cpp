@@ -18,6 +18,10 @@ GranularSettings::GranularSettings()
     addAndMakeVisible(openAudioButton);  
     addChildComponent(playerSelectNum);
     addChildComponent(playerCountNum);
+
+    timeLengthNum.clearTop();
+    playerSelectNum.clearTop();
+    playerCountNum.clearTop();
 }
 
 GranularSettings::~GranularSettings()

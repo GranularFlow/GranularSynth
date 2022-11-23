@@ -31,7 +31,7 @@ void GranularSynth::initGui()
 inline void GranularSynth::paint(Graphics& g)
 {
     // Background
-    g.fillAll(Colour::fromRGB(33, 33, 33));
+    g.fillAll(C_DARK);
     paintLogoOnce(g);   
 }
 
@@ -144,6 +144,18 @@ void GranularSynth::sliderValueChanged(Slider* slider)
         {
             slider->setValue(val - 1);
         }
+
+        for (int8 playerId = 0; playerId < granularPlayers.size(); playerId++)
+        {
+            if (playerId != val-1)
+            {
+                granularPlayers[playerId]->getCursor()->setOpacity(5);
+            }
+            else
+            {
+                granularPlayers[playerId]->getCursor()->setOpacity(100);
+            }
+        }
     }
 }
 
@@ -161,6 +173,10 @@ void GranularSynth::buttonClicked(Button* buttonClicked)
 void GranularSynth::prepareToPlay(double sampleRateIn, int bufferSizeIn) {
     if (sampleRate != sampleRateIn) {
         sampleRate = sampleRateIn;
+        for (GranularPlayer* player: granularPlayers)
+        {
+            player->changeTimer(sampleRateIn);
+        }
     }
     if (bufferSize != bufferSizeIn) {
         bufferSize = bufferSizeIn;
@@ -169,7 +185,7 @@ void GranularSynth::prepareToPlay(double sampleRateIn, int bufferSizeIn) {
 
 void GranularSynth::addNewPlayer() {
     const MessageManagerLock mmLock;
-    granularPlayers.add(new GranularPlayer(getNumTotalSamples()));
+    granularPlayers.add(new GranularPlayer(getNumTotalSamples(), sampleRate));
     addAndMakeVisible(granularPlayers.getLast(), 5);
     resized();
 }
@@ -190,26 +206,13 @@ void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
         return;
     }
 
-    float* fillChannelL = bufferToFill.getWritePointer(0);
-    float* fillChannelR = bufferToFill.getWritePointer(1);
+    bufferToFill.getWritePointer(0);
 
-    const float* emptyChannelL = audioSamples.getReadPointer(0);
-    const float* emptyChannelR = audioSamples.getReadPointer(1);
-
-
-    for (int sampleId = 0; sampleId < bufferSize; sampleId++)
+    for (GranularPlayer* player : granularPlayers)
     {
-        float sampleL = 0;
-        float sampleR = 0;
-        for (GranularPlayer* player : granularPlayers)
-        {
-            int samplePos = player->getNextGrainPosition();
-            sampleL += emptyChannelL[samplePos] * 2 * player->getSettings()->getVolume() * player->getSettings()->getPanL();
-            sampleR += emptyChannelR[samplePos] * 2 * player->getSettings()->getVolume() * player->getSettings()->getPanR();
-        }
-        fillChannelL[sampleId] = sampleL;
-        fillChannelR[sampleId] = sampleR;
-    }    
+
+        player->fillNextBuffer(bufferToFill, audioSamples);
+    }
 }
 
 int8 GranularSynth::getPlayerCount()

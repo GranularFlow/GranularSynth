@@ -18,9 +18,8 @@ public:
 
     struct Listener
     {
-        virtual void onValueChange(int8 newCursorPositionPercent) = 0;
+        virtual void onCursorPositionChange(int8 newCursorPositionPercent) = 0;
     };
-
     void setListener(Listener* listenerPntrIn) { listenerPntr = listenerPntrIn; }
     void removeListener() { listenerPntr = nullptr; }
 
@@ -33,6 +32,7 @@ public:
 	void paintCursor(Graphics& g);
 	void paintGrainLength(Graphics& g);
 	void paintGrainPosition(Graphics& g);
+    void setOpacity(int8 opacityIn);
     // Listeners
     //void onValueChange(float) override;
     void mouseDrag(const MouseEvent&) override;
@@ -46,6 +46,7 @@ public:
 
 private:
     Listener* listenerPntr = 0;
+    int8 opacity=100;
     Colour guiColour;
 	/* How far from start of buffer - x Position in % */
     int8 cursorPosition = 0;

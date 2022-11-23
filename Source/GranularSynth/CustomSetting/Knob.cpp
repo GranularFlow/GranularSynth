@@ -15,7 +15,7 @@ Knob::Knob(String nameIn, Colour guiColorIn, float startRangIn, float endRangeIn
     guiColor = guiColorIn;
     name = nameIn;
     value = defaultValue;
-
+    setLookAndFeel(&customLook);
     slider.addListener(this);
     slider.setRange(startRangIn, endRangeIn, stepIn);
     slider.setValue(defaultValue);
@@ -31,6 +31,7 @@ Knob::Knob(String nameIn, Colour guiColorIn, float startRangIn, float endRangeIn
 Knob::~Knob()
 {
     //slider.removeListener(this);
+    setLookAndFeel(nullptr);
 }
 
 void Knob::paint(Graphics& g)

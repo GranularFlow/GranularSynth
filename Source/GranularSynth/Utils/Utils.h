@@ -12,12 +12,16 @@
 #include <JuceHeader.h>
 #include "../Constants.h"
 
+
 class Utils
 {
 public:
 	Utils();
 	~Utils();
     static float percentToFloat(int8);
+    static int msToSamples(float, int);
+    static float samplesToMs(int, int);
+    static int secToSamples(float, int);
     static void addToFb(FlexBox* fb, Component& c, int8 order, int minWidth, int minHeight);
 
 private:

@@ -59,7 +59,7 @@ private:
     AudioBuffer<float> audioSamples {2, 256};
 
     int bufferSize = 256;
-    double sampleRate = 48000;
+    int sampleRate = 48000;
     float maxPlayTime = 3.0; // 3s   
     // Buffer check
     bool waveFormWasSet = false;

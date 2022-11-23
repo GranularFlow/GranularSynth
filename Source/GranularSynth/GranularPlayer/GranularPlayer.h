@@ -10,9 +10,11 @@
 
 #pragma once
 #include <JuceHeader.h>
+#include "../Constants.h"
 #include "PlayerCursor/PlayerCursor.h"
 #include "PlayerSettings/PlayerSettings.h"
-#include "../Constants.h"
+#include "Grain/Grain.h"
+
 
 /*
   ==============================================================================
@@ -20,32 +22,47 @@
   ==============================================================================
 
 */
-class GranularPlayer : public Component, public PlayerCursor::Listener
+class GranularPlayer : public Component, public PlayerCursor::Listener, public Timer
 {
 public:
+
+	enum Envelope
+	{
+
+
+	};
+
+
     // Class
-	GranularPlayer(int);
+	GranularPlayer(int, int);
 	~GranularPlayer() override;
     // GUI
 	void paint(Graphics& g) override;
 	void resized() override;
 	// Listeners
-	void onValueChange(int8) override;
+	void onCursorPositionChange(int8) override;
+	void timerCallback() override;
     // Tools
+	void addGrain(int, int);
 	int calculateStep();
-	int calculateAbsoluteCursorPosition(int8);
+	int percentToSamplePosition(int8);
     // Getters
-	int getAbsoluteCursorPosition();
-	int getNextGrainPosition();
-	int grainLengthMax();
-	PlayerSettings* getSettings();
+	void fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples);
+	int getGrainNumSamples();
+	PlayerCursor* getCursor();
 	// Setters
+	void changeTimer(int);
 
 private:
-	// Grain
-	int absoluteCursorPosition;
-	int absoluteGrainPosition;
+	// Settings
 	int totalSamples;
+	int sampleRate;
+
+	// cursor position in samples
+	int cursorPosition;
+	bool waitForNextGrain = false;
+	float offsetTimer=0;
+	OwnedArray<Grain> grains;
 	// Cursor
 	PlayerCursor cursor;
 	// Settings

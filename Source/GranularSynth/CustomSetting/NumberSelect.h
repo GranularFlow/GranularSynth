@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "../Constants.h"
+#include "CustomLook.h"
 
 class NumberSelect : public Component
 {
@@ -21,9 +22,11 @@ public:
     // GUI
     void paint(Graphics&) override;
     void resized() override;
+    void clearTop();
     // Public vars
     Slider slider{ Slider::SliderStyle::LinearHorizontal, Slider::TextEntryBoxPosition::TextBoxAbove};
 private:
+    CustomLook customLook;
     String name;
     Colour guiColor;
 };

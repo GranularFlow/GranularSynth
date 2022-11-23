@@ -31,7 +31,7 @@ void PlayerCursor::paint(Graphics& g) {
 }
 
 void PlayerCursor::paintCursor(Graphics& g) {
-    g.setColour(guiColour);
+    g.setColour(guiColour.darker( 1 - (opacity / (float) 100) ));
     //Cursor
     g.fillRect(getCursorPositionInPixels() - 1, 0, 2, getHeight() - CURSOR_BALL_RADIUS);
     // Ball, put Y to 2,25x radius, so that there is paddingfrom top and bottom
@@ -65,6 +65,12 @@ void PlayerCursor::paintGrainPosition(Graphics& g) {
     g.fillAll(Colours::white);
 }
 
+void PlayerCursor::setOpacity(int8 opacityIn)
+{
+    opacity = opacityIn;
+    repaint();
+}
+
 int PlayerCursor::getCursorPositionInPixels() {
     int position = std::floor( ( cursorPosition/(float)100) * getWidth());
     return (int)position;
@@ -87,7 +93,7 @@ void PlayerCursor::mouseDrag(const MouseEvent& event)
     if (event.x < getWidth() && event.x > 0)
     {
         cursorPosition = (int8)((event.x * 100) /(float) getWidth());
-        listenerPntr->onValueChange(cursorPosition);
+        listenerPntr->onCursorPositionChange(cursorPosition);
         repaint();
     }
 }
@@ -97,7 +103,7 @@ void PlayerCursor::mouseDown(const MouseEvent& event)
     if (event.x <= getWidth() && event.x >= 0)
     {
         cursorPosition = (int8)((event.x * 100) / getWidth());
-        listenerPntr->onValueChange(cursorPosition);
+        listenerPntr->onCursorPositionChange(cursorPosition);
         repaint();
     }
 }

@@ -10,8 +10,10 @@
 
 #include "GranularPlayer.h"
 
-GranularPlayer::GranularPlayer(int totalSamplesIn) {
+GranularPlayer::GranularPlayer(int totalSamplesIn, int sampleRateIn) {
+
     totalSamples = totalSamplesIn;
+    sampleRate = sampleRateIn;
 
     Random& random = Random::getSystemRandom();
     Colour guiColor = Colour(
@@ -20,27 +22,23 @@ GranularPlayer::GranularPlayer(int totalSamplesIn) {
         (int8)random.nextInt(255));
 
     // Cursor
-    absoluteCursorPosition = random.nextInt((int)std::floor(totalSamples / 2) + (int)std::floor(totalSamples / 4));
-    DBG("absoluteCursorPosition" << absoluteCursorPosition);
-    absoluteGrainPosition = absoluteCursorPosition;
-    int8 percentPosition = std::floor((absoluteCursorPosition * 100) /(float) totalSamples);
-    DBG("percentPosition" << (int)percentPosition);
+    cursorPosition = random.nextInt((int)std::floor(totalSamples / 2) + (int)std::floor(totalSamples / 4));
+    cursor.init(std::floor((cursorPosition * 100) / (float)totalSamples), guiColor);
 
-    cursor.init(percentPosition, guiColor);
-
-    // Settings
-    settings.setGuiColor(guiColor);
-    
+    // Settings background
+    //settings.setGuiColor(guiColor);    
 
     // Visibility
     addAndMakeVisible(cursor);
     addAndMakeVisible(settings);
 
     cursor.setListener(this);
+
+    startTimerHz(std::floor(sampleRate / (float)10));
 }
 
 GranularPlayer::~GranularPlayer() {
-    
+    stopTimer();
 }
 
 void GranularPlayer::paint(Graphics& g) {
@@ -49,14 +47,41 @@ void GranularPlayer::paint(Graphics& g) {
 void GranularPlayer::resized()
 {
     cursor.setBounds(getLocalBounds().withTrimmedBottom(getHeight() / 2));    
-    settings.setBounds(getLocalBounds().withTrimmedTop(getHeight() / 2));
+    settings.setBounds(getLocalBounds()
+        .withTrimmedTop((getHeight() / 2) * (1.01))
+        .withTrimmedLeft(getWidth() * 0.01)
+        .withTrimmedRight(getWidth() * 0.01)
+        .withTrimmedBottom(getWidth() * 0.01)
+    );
 }
 
-void GranularPlayer::onValueChange(int8 newCursorPositionPercent)
+void GranularPlayer::onCursorPositionChange(int8 newCursorPositionPercent)
 {
-    //DBG("GranularPlayer::onValueChange" << (int)newCursorPositionPercent);
-    absoluteCursorPosition = calculateAbsoluteCursorPosition(newCursorPositionPercent);
-    //DBG("absoluteCursorPosition " << absoluteCursorPosition);
+    cursorPosition = percentToSamplePosition(newCursorPositionPercent);
+}
+
+void GranularPlayer::addGrain(int startPosition, int length) {    
+    auto tmp_grain = new Grain(startPosition, Utils::msToSamples(length, sampleRate));
+    //DBG("adding grain " << Utils::msToSamples(length, sampleRate));
+    grains.add(tmp_grain);
+}
+
+void GranularPlayer::timerCallback()
+{
+    // check if need to add grain
+    if (grains.size() < settings.getNumGrains() && waitForNextGrain == false) {
+        addGrain(cursorPosition, settings.getGrainLength());
+        waitForNextGrain = true;
+    }
+    if (waitForNextGrain)
+    {
+        offsetTimer += 10;
+    }
+    if (waitForNextGrain && offsetTimer > Utils::msToSamples(settings.getGenerationSpeed(), sampleRate))
+    {
+        waitForNextGrain = false;
+        offsetTimer = 0;
+    }
 }
 
 int GranularPlayer::calculateStep()
@@ -64,53 +89,41 @@ int GranularPlayer::calculateStep()
     return 1;
 }
 
-int GranularPlayer::getAbsoluteCursorPosition()
-{
-    return absoluteCursorPosition;
-}
-
-int GranularPlayer::calculateAbsoluteCursorPosition(int8 newCursorPositionPercent)
+int GranularPlayer::percentToSamplePosition(int8 newCursorPositionPercent)
 {
     return (int)std::floor((newCursorPositionPercent /(float) 100) * totalSamples);
 }
 
-int GranularPlayer::getNextGrainPosition()
+void GranularPlayer::fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples)
 {
 
-    // Calculate next position
-
-    auto previousGrain = absoluteGrainPosition;
-
-    auto step = 1; // TODO CALCULATE STEP from settings
-
-    if (settings.isGranularMode(PlayerSettings::GranularMode::ORDER)) {
-        absoluteGrainPosition += step;
-        if (absoluteGrainPosition >= std::min(absoluteCursorPosition + grainLengthMax(), totalSamples)) {
-            absoluteGrainPosition = absoluteCursorPosition;
-        }
-
-    } else if (settings.isGranularMode(PlayerSettings::GranularMode::REVERSED_ORDER)) {
-        absoluteGrainPosition -= step;
-        if (absoluteGrainPosition <= std::max(absoluteCursorPosition - grainLengthMax(), 0)) {
-            
-            absoluteGrainPosition = absoluteCursorPosition;
+    for (int i = 0; i < grains.size(); i++)
+    {
+        if (grains[i]->getCurrentPosition() < grains[i]->getLengthInSamples())
+        {
+            grains[i]->fillNextSamples(sourceSamples, toFill, &settings);
+        }        
+        else
+        {
+            grains.remove(i, true);
         }
     }
-    //DBG("grain position " << previousGrain);
-    return previousGrain;
+
 }
 
-int GranularPlayer::grainLengthMax() {
-    // how many % from total sampleLength = lenght of grain;
-    int length = std::floor(totalSamples * (settings.getGrainLength() / (float)100));
-    //DBG("grainLengthMax " << length);
-    return length;
+int GranularPlayer::getGrainNumSamples() {
+    // calculate how many samples are in set ms length
+    return Utils::msToSamples(settings.getGrainLength(), sampleRate);
 }
 
-PlayerSettings* GranularPlayer::getSettings()
+PlayerCursor* GranularPlayer::getCursor() {
+    return &cursor;
+}
+
+void GranularPlayer::changeTimer(int sampleRateIn)
 {
-    return &settings;
+    stopTimer();
+    sampleRate = sampleRateIn;
+    // sample rate is very high, need to reduce it to less drastic timing
+    startTimerHz(std::floor(sampleRate/(float)10));
 }
-
-/*int64 getSamplePosition(int64 totalSamples, int8 cursorPositionPercentage) {
-}*/

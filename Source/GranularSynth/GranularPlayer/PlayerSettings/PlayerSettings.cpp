@@ -21,6 +21,13 @@ PlayerSettings::~PlayerSettings()
 }
 
 void PlayerSettings::initGui() {
+    // GUI
+    for (int8 i = 0; i < settingsCount; i++)
+    {
+        separators.add(new Separator());
+        addAndMakeVisible(separators.getLast());
+    }
+   
     // Play style
     addAndMakeVisible(granularModeRadioBox);
     addAndMakeVisible(runningModeRadioBox);
@@ -28,22 +35,18 @@ void PlayerSettings::initGui() {
     // Grains
     addAndMakeVisible(grainLengthKnob);
     addAndMakeVisible(grainPitchKnob);
-    addAndMakeVisible(grainSpeedKnob);
+    addAndMakeVisible(grainNumKnob);
     addAndMakeVisible(generationSpeedKnob);
-    addAndMakeVisible(offsetKnob);
+    addAndMakeVisible(overlapPreviousKnob);
     // Master
     addAndMakeVisible(volumeKnob);
     addAndMakeVisible(panKnob);
 }
 
 void PlayerSettings::paint(Graphics& g) {
-    // Background
-    g.fillAll(guiColour);
-    // Darkening filter
-    g.fillAll(Colour::fromRGBA(0, 0, 0, 50));
     // Settings panel
-    g.setColour(C_DARK);
-    g.fillRoundedRectangle(getWidth()*0.01, getHeight()*0.025, getWidth() * 0.98, getHeight() * 0.95, 20.0);
+    g.setColour(L_GRAY);
+    g.fillRoundedRectangle(getLocalBounds().toFloat(), 30);
 }
 
 void PlayerSettings::resized() {
@@ -52,32 +55,47 @@ void PlayerSettings::resized() {
             FlexBox::Wrap::noWrap,
             FlexBox::AlignContent::center,
             FlexBox::AlignItems::center,
-            FlexBox::JustifyContent::center
+            FlexBox::JustifyContent::spaceAround
     };
-
-    auto minWidth = (getWidth() * 0.95) / 10;
+    
+    auto minWidth = (getWidth() * 0.9) / settingsCount;
     auto minHeight = getHeight() * 0.8f;
 
+    // SeparatorLines , TODO: more effective paint
+    for (int8 i = 1; i < settingsCount*2 - 1; i+=2)
+    {
+        Utils::addToFb(&fb, *separators[(i - 1) / 2], i, 1, minHeight * 0.6);
+    }
+    
     Utils::addToFb(&fb, granularModeRadioBox, 0, minWidth, minHeight);
-    Utils::addToFb(&fb, runningModeRadioBox, 1, minWidth, minHeight);
-    Utils::addToFb(&fb, playModeRadioBox, 2, minWidth, minHeight);
+    Utils::addToFb(&fb, runningModeRadioBox, 2, minWidth, minHeight);
+    Utils::addToFb(&fb, playModeRadioBox, 4, minWidth, minHeight);
 
-    Utils::addToFb(&fb, grainLengthKnob, 3, minWidth, minHeight);
-    Utils::addToFb(&fb, grainPitchKnob, 4, minWidth, minHeight);
-    Utils::addToFb(&fb, grainSpeedKnob, 5, minWidth, minHeight);
-    Utils::addToFb(&fb, generationSpeedKnob, 6, minWidth, minHeight);
-    Utils::addToFb(&fb, offsetKnob, 7, minWidth, minHeight);
+    Utils::addToFb(&fb, grainLengthKnob, 6, minWidth, minHeight);
+    Utils::addToFb(&fb, grainPitchKnob, 8, minWidth, minHeight);
+    Utils::addToFb(&fb, grainNumKnob, 10, minWidth, minHeight);
+    Utils::addToFb(&fb, generationSpeedKnob, 12, minWidth, minHeight);
+    Utils::addToFb(&fb, overlapPreviousKnob, 14, minWidth, minHeight);
 
-    Utils::addToFb(&fb, volumeKnob, 8, minWidth, minHeight);
-    Utils::addToFb(&fb, panKnob, 9, minWidth, minHeight);
+    Utils::addToFb(&fb, volumeKnob, 16, minWidth, minHeight);
+    Utils::addToFb(&fb, panKnob, 18, minWidth, minHeight);
 
     fb.performLayout(getLocalBounds());
 }
 
-int8 PlayerSettings::getGrainLength()
+int PlayerSettings::getGrainLength()
 {
-    //DBG("(int8)grainLengthKnob.getValue()"<< (int)grainLengthKnob.getValue());
-    return (int8)grainLengthKnob.getValue();
+    return (int)grainLengthKnob.getValue();
+}
+
+int PlayerSettings::getNumGrains()
+{
+    return (int)grainNumKnob.getValue();
+}
+
+float PlayerSettings::getGrainPitch()
+{
+    return 0.0f;
 }
 
 bool PlayerSettings::isPlayMode(PlayerSettings::PlayMode mode) {
@@ -92,19 +110,24 @@ bool PlayerSettings::isGranularMode(PlayerSettings::GranularMode mode) {
     return (PlayerSettings::GranularMode)granularModeRadioBox.getValue() == mode;
 }
 
+int PlayerSettings::getGenerationSpeed()
+{
+    return (int)generationSpeedKnob.getValue();
+}
+
+int PlayerSettings::getOverlapPrevious()
+{
+    return overlapPreviousKnob.getValue();
+}
+
 float PlayerSettings::getVolume()
 {
     return (float)volumeKnob.getValue() / 100;
 }
 
-float PlayerSettings::getPanR()
+float PlayerSettings::getPan(int8 channel)
 {
-    return  ((float)panKnob.getValue() / 100);
-}
-
-float PlayerSettings::getPanL()
-{
-    return 1 - ((float)panKnob.getValue() / 100);
+    return  1 - abs(channel - ((float)panKnob.getValue() / 100));
 }
 
 void PlayerSettings::setGuiColor(Colour guiColourIn)

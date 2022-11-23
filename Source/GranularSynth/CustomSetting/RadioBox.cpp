@@ -5,6 +5,8 @@
 
 RadioBox::RadioBox(String nameIn, Colour guiColorIn, Array<String> elementsIn)
 {
+    setLookAndFeel(&customLook);
+
     name = nameIn;
     guiColor = guiColorIn;
 
@@ -26,6 +28,8 @@ RadioBox::~RadioBox() {
     {
         button->removeListener(this);
     }
+
+    setLookAndFeel(nullptr);
 }
 
 void RadioBox::paint(Graphics& g) {
@@ -62,14 +66,14 @@ void RadioBox::resized()
     juce::FlexBox fb {
         FlexBox::Direction::column,
         FlexBox::Wrap::wrap,
-        FlexBox::AlignContent::spaceAround,
+        FlexBox::AlignContent::center,
         FlexBox::AlignItems::center,
         FlexBox::JustifyContent::center
     };
 
     for (ToggleButton* toggleButton : toggleButtons)
     {
-        fb.items.add(juce::FlexItem(*toggleButton).withMinWidth(getWidth()).withMinHeight(50));
+        fb.items.add(juce::FlexItem(*toggleButton).withMinWidth(getWidth()*0.8).withMinHeight(50));
     }
     fb.performLayout(getLocalBounds().toFloat());
 }

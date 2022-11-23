@@ -15,6 +15,7 @@
 #include "../../Utils/Utils.h"
 #include "../../CustomSetting/RadioBox.h"
 #include "../../CustomSetting/Knob.h"
+#include "../../CustomSetting/Separator.h"
 
 class PlayerSettings : public Component
 {
@@ -51,30 +52,33 @@ public:
     bool isRunningMode(RunningMode);
     bool isPlayMode(PlayMode);
     // Getters
-    int8 getGrainLength();
+    int getNumGrains();
+    int getGrainLength();
     float getGrainPitch();
-    float getGrainSpeed();
-    int8 getGenerationSpeed();
-    int8 getOffset();
+    int getGenerationSpeed();
+    int getOverlapPrevious();
     float getVolume();
-    float getPanR();
-    float getPanL();
+    float getPan(int8 channel);
     // Setters
     void setGuiColor(Colour colour);
 
 private:
+    // GUI
 	Colour guiColour;
+    OwnedArray<Separator> separators;
+    int8 settingsCount = 10;
     // Play style
     RadioBox granularModeRadioBox {"GRANULAR MODE", L_GREEN, GRANULAR_MODE};
-    RadioBox runningModeRadioBox { "RUNNING MODE", L_ORANGE, RUNNING_MODE};
-    RadioBox playModeRadioBox { "PLAY MODE", N_PINK, PLAY_MODE};
+    RadioBox runningModeRadioBox { "CURSOR", L_ORANGE, RUNNING_MODE};
+    RadioBox playModeRadioBox { "MIDI TRIG", N_PINK, PLAY_MODE};
     // Grains
-    Knob grainLengthKnob { "GRAIN LENGTH", L_AQUA, 0, 100, 2, 50 }; // %
-    Knob grainPitchKnob { "GRAIN PITCH", G_YELLOW, -1, 1, 0.1, 0 }; // - 1 ; 1 x 
-    Knob grainSpeedKnob { "GRAIN SPEED", N_MAGENTA, 1/16, 2, 0.02, 1 }; // 1/16 ; 2x faster
-    Knob generationSpeedKnob { "GRAIN GENERATION", L_RED, 1, 100, 1, 50 }; // ms how fast to generate new sample - care this wont work
-    Knob offsetKnob { "GRAIN OFFSET", L_ORANGE, 0, 100, 2, 50 }; // position respective to cursor and grain length
+    Knob grainNumKnob{ "NUMBER OF GRAINS", L_AQUA, 1, 100, 1, 5 }; // ms
+    Knob grainLengthKnob { "LENGTH", L_AQUA, 1, 1000, 1, 50 }; // ms
+    Knob grainPitchKnob { "PITCH", G_YELLOW, -1, 1, 0.1, 0 }; // - 1 ; 1 x 
+    Knob generationSpeedKnob { "GENERATION SPEED", L_RED, 1, 500, 1, 10 }; // ms how fast to generate new sample after creating last one
+    Knob overlapPreviousKnob{ "OVERLAP SAMPLES", N_MAGENTA, 0, 5000, 50, 50 }; // overlap in samples
     // Master
     Knob volumeKnob {"VOLUME", N_YELLOW, 0, 100, 2, 50 }; // %
     Knob panKnob { "PAN", N_MAGENTA, 0, 100, 2, 50 }; // %
+    // ADSR
 };

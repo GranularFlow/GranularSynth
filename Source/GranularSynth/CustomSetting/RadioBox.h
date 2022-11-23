@@ -11,6 +11,7 @@
 #pragma once
 #include <JuceHeader.h>
 #include "../Constants.h"
+#include "CustomLook.h"
 
 class RadioBox : public Component, public ToggleButton::Listener
 {
@@ -28,6 +29,7 @@ public:
     int8 getValue();
 
 private:
+    CustomLook customLook;
     String name;
     Colour guiColor;
     OwnedArray<ToggleButton> toggleButtons;

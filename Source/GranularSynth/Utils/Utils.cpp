@@ -8,7 +8,8 @@
   ==============================================================================
 */
 
-#include "Utils.h"
+#include "./Utils.h"
+
 
 Utils::Utils()
 {
@@ -16,6 +17,22 @@ Utils::Utils()
 
 Utils::~Utils()
 {
+}
+
+int Utils::msToSamples(float timeInMs, int sampleRate) {
+
+    return Utils::secToSamples((timeInMs /(float) 1000), sampleRate);
+}
+
+float Utils::samplesToMs(int samplesCount, int sampleRate) {
+
+    return (samplesCount /(float)sampleRate) - 1000;
+}
+
+int Utils::secToSamples(float timeInSec, int sampleRate) {
+    int samples = std::floor(sampleRate * timeInSec);
+    //DBG("samples" << samples);
+    return samples;
 }
 
 float Utils::percentToFloat(int8 percent)
