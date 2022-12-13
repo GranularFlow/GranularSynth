@@ -26,7 +26,7 @@ int Utils::msToSamples(float timeInMs, int sampleRate) {
 
 float Utils::samplesToMs(int samplesCount, int sampleRate) {
 
-    return (samplesCount /(float)sampleRate) - 1000;
+    return (samplesCount /(float)sampleRate) * 1000;
 }
 
 int Utils::secToSamples(float timeInSec, int sampleRate) {
@@ -38,6 +38,11 @@ int Utils::secToSamples(float timeInSec, int sampleRate) {
 float Utils::percentToFloat(int8 percent)
 {
     return (float)percent/100;
+}
+
+float Utils::samplesToPercent(int samplePosition, int totalSamples)
+{
+    return std::floor( (samplePosition/(float) totalSamples) * 100);
 }
 
 void Utils::addToFb(FlexBox* fb, Component& c, int8 order, int minWidth,int minHeight) {

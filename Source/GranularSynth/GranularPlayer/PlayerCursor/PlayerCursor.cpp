@@ -33,7 +33,7 @@ void PlayerCursor::paint(Graphics& g) {
 void PlayerCursor::paintCursor(Graphics& g) {
     g.setColour(guiColour.darker( 1 - (opacity / (float) 100) ));
     //Cursor
-    g.fillRect(getCursorPositionInPixels() - 1, 0, 2, getHeight() - CURSOR_BALL_RADIUS);
+    g.fillRect(getCursorPositionInPixels() - 1.0, 0.0, 2.0, getHeight() - CURSOR_BALL_RADIUS);
     // Ball, put Y to 2,25x radius, so that there is paddingfrom top and bottom
     g.fillEllipse(static_cast<float>(getCursorPositionInPixels() - CURSOR_BALL_RADIUS),
                   static_cast<float>(getHeight() - (CURSOR_BALL_RADIUS * 2.25)),
@@ -71,12 +71,12 @@ void PlayerCursor::setOpacity(int8 opacityIn)
     repaint();
 }
 
-int PlayerCursor::getCursorPositionInPixels() {
-    int position = std::floor( ( cursorPosition/(float)100) * getWidth());
-    return (int)position;
+float PlayerCursor::getCursorPositionInPixels() {
+    float position = std::floor( ( cursorPosition/(float)100) * getWidth());
+    return position;
 }
 
-void PlayerCursor::setCursorPosition(int8 cursorPositionIn)
+void PlayerCursor::setCursorPosition(float cursorPositionIn)
 {
     cursorPosition = cursorPositionIn;
     repaint();

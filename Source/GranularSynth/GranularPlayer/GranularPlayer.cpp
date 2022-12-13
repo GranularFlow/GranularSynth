@@ -23,7 +23,7 @@ GranularPlayer::GranularPlayer(int totalSamplesIn, int sampleRateIn) {
 
     // Cursor
     cursorPosition = random.nextInt((int)std::floor(totalSamples / 2) + (int)std::floor(totalSamples / 4));
-    cursor.init(std::floor((cursorPosition * 100) / (float)totalSamples), guiColor);
+    cursor.init(Utils::samplesToPercent(cursorPosition, totalSamples), guiColor);
 
     // Settings background
     //settings.setGuiColor(guiColor);    
@@ -34,7 +34,7 @@ GranularPlayer::GranularPlayer(int totalSamplesIn, int sampleRateIn) {
 
     cursor.setListener(this);
 
-    startTimerHz(std::floor(sampleRate / (float)10));
+    startTimer(500);
 }
 
 GranularPlayer::~GranularPlayer() {
@@ -48,7 +48,7 @@ void GranularPlayer::resized()
 {
     cursor.setBounds(getLocalBounds().withTrimmedBottom(getHeight() / 2));    
     settings.setBounds(getLocalBounds()
-        .withTrimmedTop((getHeight() / 2) * (1.01))
+        .withTrimmedTop((getHeight() / 2) * (1.25))
         .withTrimmedLeft(getWidth() * 0.01)
         .withTrimmedRight(getWidth() * 0.01)
         .withTrimmedBottom(getWidth() * 0.01)
@@ -61,27 +61,29 @@ void GranularPlayer::onCursorPositionChange(int8 newCursorPositionPercent)
 }
 
 void GranularPlayer::addGrain(int startPosition, int length) {    
-    auto tmp_grain = new Grain(startPosition, Utils::msToSamples(length, sampleRate));
+    auto tmp_grain = new Grain(startPosition, Utils::msToSamples(length, sampleRate), settings.getOffset(), settings.getGrainPitch(), settings.getVolume() * settings.getPan(0), settings.getVolume() * settings.getPan(1));
     //DBG("adding grain " << Utils::msToSamples(length, sampleRate));
     grains.add(tmp_grain);
 }
 
 void GranularPlayer::timerCallback()
 {
-    // check if need to add grain
-    if (grains.size() < settings.getNumGrains() && waitForNextGrain == false) {
-        addGrain(cursorPosition, settings.getGrainLength());
-        waitForNextGrain = true;
+    //check if running
+
+    if (cursorPosition >= totalSamples) {
+        cursorPosition = 0;
     }
-    if (waitForNextGrain)
+    if (cursorPosition <= 0 ) {
+        cursorPosition = totalSamples;
+    }
+
+    if (settings.isRunningMode(settings.RUNNING))
     {
-        offsetTimer += 10;
+        cursorPosition += 10;        
+        cursor.setCursorPosition(Utils::samplesToPercent(cursorPosition, totalSamples));
     }
-    if (waitForNextGrain && offsetTimer > Utils::msToSamples(settings.getGenerationSpeed(), sampleRate))
-    {
-        waitForNextGrain = false;
-        offsetTimer = 0;
-    }
+
+
 }
 
 int GranularPlayer::calculateStep()
@@ -96,19 +98,42 @@ int GranularPlayer::percentToSamplePosition(int8 newCursorPositionPercent)
 
 void GranularPlayer::fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples)
 {
+    // check if need to add grain
+    if (grains.size() < settings.getNumGrains() && waitForNextGrain == false) {      
+
+        addGrain(cursorPosition, settings.getGrainLength());
+        waitForNextGrain = true;
+    }
+
+    if (waitForNextGrain && grainTimer >= settings.getGenerationSpeed())
+    {
+        waitForNextGrain = false;
+        grainTimer = 0;
+    }
+
+    if (waitForNextGrain)
+    {
+        grainTimer += toFill.getNumSamples() /(float) sampleRate * 1000;
+    }
+    Array<int8> deleteArray;
 
     for (int i = 0; i < grains.size(); i++)
     {
-        if (grains[i]->getCurrentPosition() < grains[i]->getLengthInSamples())
+
+        if (grains[i]->getDelete())
         {
-            grains[i]->fillNextSamples(sourceSamples, toFill, &settings);
+            deleteArray.add(i);
         }        
         else
         {
-            grains.remove(i, true);
+            grains[i]->fillNextSamples(sourceSamples, toFill, &settings, totalSamples);
         }
     }
 
+    for (int8 i = 0; i < deleteArray.size(); i++)
+    {
+        grains.remove(deleteArray[i], true);
+    }
 }
 
 int GranularPlayer::getGrainNumSamples() {

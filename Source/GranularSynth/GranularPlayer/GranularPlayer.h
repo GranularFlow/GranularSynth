@@ -32,7 +32,6 @@ public:
 
 	};
 
-
     // Class
 	GranularPlayer(int, int);
 	~GranularPlayer() override;
@@ -60,8 +59,10 @@ private:
 
 	// cursor position in samples
 	int cursorPosition;
+	int cursorTimer = 0;
+
 	bool waitForNextGrain = false;
-	float offsetTimer=0;
+	int grainTimer = 0;
 	OwnedArray<Grain> grains;
 	// Cursor
 	PlayerCursor cursor;

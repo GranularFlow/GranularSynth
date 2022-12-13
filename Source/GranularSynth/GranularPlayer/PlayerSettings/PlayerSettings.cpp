@@ -22,7 +22,7 @@ PlayerSettings::~PlayerSettings()
 
 void PlayerSettings::initGui() {
     // GUI
-    for (int8 i = 0; i < settingsCount; i++)
+    for (int8 i = 0; i < 3; i++)
     {
         separators.add(new Separator());
         addAndMakeVisible(separators.getLast());
@@ -37,7 +37,7 @@ void PlayerSettings::initGui() {
     addAndMakeVisible(grainPitchKnob);
     addAndMakeVisible(grainNumKnob);
     addAndMakeVisible(generationSpeedKnob);
-    addAndMakeVisible(overlapPreviousKnob);
+    addAndMakeVisible(grainOffsetKnob);
     // Master
     addAndMakeVisible(volumeKnob);
     addAndMakeVisible(panKnob);
@@ -50,35 +50,63 @@ void PlayerSettings::paint(Graphics& g) {
 }
 
 void PlayerSettings::resized() {
+
+    auto minWidth = (getWidth() * 0.9) / 4;
+    auto maxHeight = getHeight();
+
     FlexBox fb {
             FlexBox::Direction::row,
             FlexBox::Wrap::noWrap,
             FlexBox::AlignContent::center,
-            FlexBox::AlignItems::center,
+            FlexBox::AlignItems::flexStart,
             FlexBox::JustifyContent::spaceAround
+    }; 
+
+
+    FlexBox fbLine1{
+        FlexBox::Direction::row,
+        FlexBox::Wrap::wrap,
+        FlexBox::AlignContent::center,
+        FlexBox::AlignItems::center,
+        FlexBox::JustifyContent::center
+    };    
+    Utils::addToFb(&fbLine1, granularModeRadioBox, 0, minWidth/3, maxHeight);
+    Utils::addToFb(&fbLine1, runningModeRadioBox, 1, minWidth/3, maxHeight);
+    Utils::addToFb(&fbLine1, playModeRadioBox, 2, minWidth/3, maxHeight);
+    fb.items.add(FlexItem(fbLine1).withMinWidth(minWidth).withHeight(maxHeight).withOrder(1));
+
+    FlexBox fbLine2{
+        FlexBox::Direction::row,
+        FlexBox::Wrap::wrap,
+        FlexBox::AlignContent::center,
+        FlexBox::AlignItems::center,
+        FlexBox::JustifyContent::spaceAround
     };
-    
-    auto minWidth = (getWidth() * 0.9) / settingsCount;
-    auto minHeight = getHeight() * 0.8f;
+    Utils::addToFb(&fbLine2, grainLengthKnob, 1, minWidth / 3, maxHeight / 2);
+    Utils::addToFb(&fbLine2, grainPitchKnob, 2, minWidth / 3, maxHeight / 2);
+    Utils::addToFb(&fbLine2, grainNumKnob, 3, minWidth / 3, maxHeight / 2);
+    Utils::addToFb(&fbLine2, generationSpeedKnob, 4, minWidth/2, maxHeight / 2);
+    Utils::addToFb(&fbLine2, grainOffsetKnob, 5, minWidth/2, maxHeight / 2);
+    fb.items.add(FlexItem(fbLine2).withMinWidth(minWidth).withHeight(maxHeight).withMargin(0).withOrder(3));
 
-    // SeparatorLines , TODO: more effective paint
-    for (int8 i = 1; i < settingsCount*2 - 1; i+=2)
+    FlexBox fbLine3{
+        FlexBox::Direction::column,
+        FlexBox::Wrap::wrap,
+        FlexBox::AlignContent::center,
+        FlexBox::AlignItems::center,
+        FlexBox::JustifyContent::center
+    };
+
+    fbLine3.items.add(FlexItem(volumeKnob).withMinWidth(minWidth).withHeight(maxHeight/2).withOrder(0));
+    fbLine3.items.add(FlexItem(panKnob).withMinWidth(minWidth).withHeight(maxHeight/2).withOrder(1));
+
+    fb.items.add(FlexItem(fbLine3).withMinWidth(minWidth).withHeight(maxHeight).withOrder(5));
+
+    for (int8 i = 0; i < 3; i++)
     {
-        Utils::addToFb(&fb, *separators[(i - 1) / 2], i, 1, minHeight * 0.6);
+        fb.items.add(FlexItem(*separators[i]).withMinWidth(1).withHeight(maxHeight).withOrder((i+1)*2));
     }
-    
-    Utils::addToFb(&fb, granularModeRadioBox, 0, minWidth, minHeight);
-    Utils::addToFb(&fb, runningModeRadioBox, 2, minWidth, minHeight);
-    Utils::addToFb(&fb, playModeRadioBox, 4, minWidth, minHeight);
 
-    Utils::addToFb(&fb, grainLengthKnob, 6, minWidth, minHeight);
-    Utils::addToFb(&fb, grainPitchKnob, 8, minWidth, minHeight);
-    Utils::addToFb(&fb, grainNumKnob, 10, minWidth, minHeight);
-    Utils::addToFb(&fb, generationSpeedKnob, 12, minWidth, minHeight);
-    Utils::addToFb(&fb, overlapPreviousKnob, 14, minWidth, minHeight);
-
-    Utils::addToFb(&fb, volumeKnob, 16, minWidth, minHeight);
-    Utils::addToFb(&fb, panKnob, 18, minWidth, minHeight);
 
     fb.performLayout(getLocalBounds());
 }
@@ -95,7 +123,7 @@ int PlayerSettings::getNumGrains()
 
 float PlayerSettings::getGrainPitch()
 {
-    return 0.0f;
+    return (float)grainPitchKnob.getValue();
 }
 
 bool PlayerSettings::isPlayMode(PlayerSettings::PlayMode mode) {
@@ -110,14 +138,14 @@ bool PlayerSettings::isGranularMode(PlayerSettings::GranularMode mode) {
     return (PlayerSettings::GranularMode)granularModeRadioBox.getValue() == mode;
 }
 
-int PlayerSettings::getGenerationSpeed()
+float PlayerSettings::getGenerationSpeed()
 {
-    return (int)generationSpeedKnob.getValue();
+    return (float)generationSpeedKnob.getValue();
 }
 
-int PlayerSettings::getOverlapPrevious()
+int PlayerSettings::getOffset()
 {
-    return overlapPreviousKnob.getValue();
+    return grainOffsetKnob.getValue();
 }
 
 float PlayerSettings::getVolume()

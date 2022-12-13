@@ -39,9 +39,9 @@ public:
     void mouseDown(const MouseEvent&) override;
     void mouseUp(const MouseEvent&) override;
     // Getters
-    int getCursorPositionInPixels();
+    float getCursorPositionInPixels();
     // Setters
-	void setCursorPosition(int8);
+	void setCursorPosition(float);
 	void setGuiColour(Colour colour);
 
 private:
@@ -49,5 +49,5 @@ private:
     int8 opacity=100;
     Colour guiColour;
 	/* How far from start of buffer - x Position in % */
-    int8 cursorPosition = 0;
+    float cursorPosition = 0;
 };

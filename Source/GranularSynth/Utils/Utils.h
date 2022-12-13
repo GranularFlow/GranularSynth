@@ -19,6 +19,7 @@ public:
 	Utils();
 	~Utils();
     static float percentToFloat(int8);
+    static float samplesToPercent(int,int);
     static int msToSamples(float, int);
     static float samplesToMs(int, int);
     static int secToSamples(float, int);

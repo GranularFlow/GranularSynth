@@ -23,8 +23,8 @@ void CustomLook::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
 
     auto radius = jmin(bounds.getWidth(), bounds.getHeight()) / 2.0f;
     auto toAngle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-    auto lineW = jmin(8.0f, radius * 0.5f);
-    auto arcRadius = radius - lineW * 0.5f;
+    auto lineW = jmin(5.0f, radius /2.f);
+    auto arcRadius = radius - lineW / 2.f;
 
     Path backgroundArc;
     backgroundArc.addCentredArc(bounds.getCentreX(),
@@ -52,21 +52,26 @@ void CustomLook::drawRotarySlider(juce::Graphics& g, int x, int y, int width, in
             true);
 
         g.setColour(fill);
-        g.strokePath(valueArc, PathStrokeType(lineW, PathStrokeType::curved, PathStrokeType::rounded));
+        g.strokePath(valueArc, PathStrokeType(lineW, PathStrokeType::curved, PathStrokeType::butt));
     }
 
     Point<float> thumbPoint(bounds.getCentreX() + arcRadius * std::cos(toAngle - MathConstants<float>::halfPi),
         bounds.getCentreY() + arcRadius * std::sin(toAngle - MathConstants<float>::halfPi));
 
+
+
     // Thumb
     juce::Path thumb;
-    auto thumbLength = radius * 0.8f;
-    auto thumbThickness = 8.0f;
+    auto thumbLength = radius * 0.75f;
+    auto thumbThickness = 5.0f;
 
-    thumb.addRectangle(-thumbThickness * 0.5f, -radius, thumbThickness, thumbLength);
+    g.setColour(C_GRAY);
+    g.fillEllipse(Rectangle<float>(thumbLength * 2, thumbLength * 2).withCentre(Point<float>(bounds.getCentreX(), bounds.getCentreY())));
+
+    thumb.addRoundedRectangle(Rectangle<float>(-thumbThickness / 2, -thumbLength, thumbThickness, thumbLength), 1);
     thumb.applyTransform(juce::AffineTransform::rotation(toAngle).translated(bounds.getCentreX(), bounds.getCentreY()));
 
-    g.setColour(fill);
+    g.setColour(C_SMOKE);
     g.fillPath(thumb);
 
     
@@ -88,7 +93,7 @@ void CustomLook::drawLinearSlider(Graphics& g, int x, int y, int width, int heig
         auto isTwoVal = (style == Slider::SliderStyle::TwoValueVertical || style == Slider::SliderStyle::TwoValueHorizontal);
         auto isThreeVal = (style == Slider::SliderStyle::ThreeValueVertical || style == Slider::SliderStyle::ThreeValueHorizontal);
 
-        auto trackWidth = jmin(6.0f, slider.isHorizontal() ? (float)height * 0.25f : (float)width * 0.25f);
+        auto trackWidth = jmax(6.0f, slider.isHorizontal() ? (float)height * 0.25f : (float)width * 0.25f);
 
         Point<float> startPoint(slider.isHorizontal() ? (float)x : (float)x + (float)width * 0.5f,
             slider.isHorizontal() ? (float)y + (float)height * 0.5f : (float)(height + y));
@@ -176,15 +181,14 @@ void CustomLook::drawTickBox(Graphics& g, Component& component,
     const bool shouldDrawButtonAsDown)
 {
     ignoreUnused(isEnabled, shouldDrawButtonAsHighlighted, shouldDrawButtonAsDown);
+    Rectangle<float> tickBounds(x + (w * 0.25 / 2), y + (h * 0.25 / 2), w * 0.75, h * 0.75);
 
-    Rectangle<float> tickBounds(x, y, w, h);
-
-    g.setColour(C_SMOKE);
-    g.drawEllipse(tickBounds, 1.0f);
+    g.setColour(C_VL_GRAY);
+    g.drawEllipse(tickBounds, 2.5f);
 
     if (ticked)
     {
         g.setColour(component.findColour(ToggleButton::tickColourId));
-        g.fillEllipse(tickBounds.reduced(4));
+        g.fillEllipse(tickBounds.reduced(2));
     }
 }

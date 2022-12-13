@@ -29,9 +29,9 @@ const float T_H_SIZE = 18.f;
 const int8 NUM_BUFFERS = 100;
 
 // GranularPlayer enumToString
-const Array<String> GRANULAR_MODE = {"IN ORDER", "REVERSED ORDER", "PLAY FROM CENTER", "PLAY TO CENTER"};
+const Array<String> GRANULAR_MODE = {"ORDER", "REV.ORDER", "MIRROR", "REV.MIRROR"};
 const Array<String> RUNNING_MODE = {"STATIC", "RUNNING"};
-const Array<String> PLAY_MODE = {"CONTINUOUS", "TRIGGERED"};
+const Array<String> PLAY_MODE = {"OFF", "ON"};
 
 // ----------------------------
 // Colours for buttons and knobs
@@ -60,3 +60,27 @@ const Colour N_MAGENTA = Colour::fromRGB(208, 70, 253);
 const Colour N_AQUA = Colour::fromRGB(76, 240, 198);
 const Colour N_YELLOW = Colour::fromRGB(254, 214, 36);
 const Colour N_PINK = Colour::fromRGB(252, 56, 84);
+
+//PALETTE
+
+const Colour C_SUNFLOWER = Colour::fromRGB(255, 195, 18);
+const Colour C_RADIANTYELLOW = Colour::fromRGB(247, 159, 31);
+const Colour C_BILLS = Colour::fromRGB(238, 90, 36);
+const Colour C_PIGMENT = Colour::fromRGB(234, 32, 39);
+
+const Colour C_ENERGOS = Colour::fromRGB(196, 229, 56);
+const Colour C_ANDROID = Colour::fromRGB(163, 203, 56);
+const Colour C_GRASS = Colour::fromRGB(0, 148, 50);
+
+const Colour C_MARTINA = Colour::fromRGB(18, 203, 196);
+const Colour C_MEDITERRANEAN = Colour::fromRGB(18, 137, 167);
+const Colour C_MARINE = Colour::fromRGB(0, 168, 255);
+//const Colour C_MARINE = Colour::fromRGB(0, 168, 255);
+
+const Colour C_LAVENDER = Colour::fromRGB(217, 128, 250);
+
+const Colour C_BARARED = Colour::fromRGB(237, 76, 103);
+
+
+//
+const Colour C_VL_GRAY = Colour::fromRGB(118, 118, 118);

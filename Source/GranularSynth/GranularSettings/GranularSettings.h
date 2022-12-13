@@ -29,12 +29,12 @@ public:
     void resized() override;
 
     // Buffer length - number of buffers to play from
-    NumberSelect timeLengthNum{ "Length", N_MAGENTA ,1.0, 3.0, 0.1, 3.0 };
+    NumberSelect timeLengthNum{ "Length", C_ANDROID ,1.0, 3.0, 0.1, 3.0 };
     // Open file button
     TextButton openAudioButton{ "Open File" };
     // Player settings
-    NumberSelect playerCountNum{ "Count", N_YELLOW, 0, 3, 1, 0 };
-    NumberSelect playerSelectNum{ "Select", N_AQUA, 0, 3, 1, 0 };
+    NumberSelect playerCountNum{ "Count", C_BARARED, 0, 3, 1, 0 };
+    NumberSelect playerSelectNum{ "Select", C_MARINE, 0, 3, 1, 0 };
 
 private:
 

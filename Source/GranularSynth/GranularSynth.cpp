@@ -149,7 +149,7 @@ void GranularSynth::sliderValueChanged(Slider* slider)
         {
             if (playerId != val-1)
             {
-                granularPlayers[playerId]->getCursor()->setOpacity(5);
+                granularPlayers[playerId]->getCursor()->setOpacity(1);
             }
             else
             {
@@ -205,8 +205,6 @@ void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
     {
         return;
     }
-
-    bufferToFill.getWritePointer(0);
 
     for (GranularPlayer* player : granularPlayers)
     {

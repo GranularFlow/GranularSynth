@@ -26,7 +26,7 @@ public:
     // Getters
     float getValue();
     // Public vars
-    Slider slider { Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::TextBoxBelow };
+    Slider slider { Slider::SliderStyle::RotaryHorizontalDrag, Slider::TextEntryBoxPosition::NoTextBox };
 private:
     CustomLook customLook;
     String name;

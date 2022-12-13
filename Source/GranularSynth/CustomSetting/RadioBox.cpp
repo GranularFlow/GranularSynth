@@ -73,7 +73,7 @@ void RadioBox::resized()
 
     for (ToggleButton* toggleButton : toggleButtons)
     {
-        fb.items.add(juce::FlexItem(*toggleButton).withMinWidth(getWidth()*0.8).withMinHeight(50));
+        fb.items.add(juce::FlexItem(*toggleButton).withMinWidth(getWidth()*0.8).withHeight(20).withMaxHeight((getHeight() - 30) / toggleButtons.size()));
     }
     fb.performLayout(getLocalBounds().toFloat());
 }

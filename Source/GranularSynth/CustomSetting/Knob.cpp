@@ -37,7 +37,7 @@ Knob::~Knob()
 void Knob::paint(Graphics& g)
 {
     g.setColour(guiColor);
-    g.fillRect((getWidth() / 2) / 2, 0, (getWidth() / 2), 5);
+    g.fillRect(Rectangle<float>(50, 10).withCentre(Point<float>(getWidth()/(float)2.0, 0)));
 
     g.setColour(C_SMOKE);
     g.drawFittedText(name, getLocalBounds().withTrimmedTop(10).withTrimmedRight(getWidth() * 0.1).withTrimmedLeft(getWidth() * 0.1), Justification::centredTop, 1);
@@ -45,7 +45,7 @@ void Knob::paint(Graphics& g)
 
 void Knob::resized()
 {
-    slider.setBounds(getLocalBounds().withSizeKeepingCentre(getWidth(), getHeight()/2));
+    slider.setBounds(getLocalBounds().withTrimmedTop(30));
 }
 
 void Knob::sliderValueChanged(Slider* changedSlider)
