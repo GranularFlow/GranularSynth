@@ -39,7 +39,11 @@ public:
 	void paint(Graphics& g) override;
 	void resized() override;
 	// Listeners
-	void onCursorPositionChange(int8) override;
+	void onCursorPositionChange(int) override;
+	bool isCurrentGranularMode(PlayerSettings::GranularMode) override;
+	bool isCurrentRunningMode(PlayerSettings::RunningMode) override;
+	bool isCurrentMidiMode(PlayerSettings::MidiMode) override;
+	int getMaxSamples() override;
 	void timerCallback() override;
     // Tools
 	void addGrain(int, int);

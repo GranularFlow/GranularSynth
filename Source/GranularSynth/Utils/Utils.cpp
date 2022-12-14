@@ -30,7 +30,7 @@ float Utils::samplesToMs(int samplesCount, int sampleRate) {
 }
 
 int Utils::secToSamples(float timeInSec, int sampleRate) {
-    int samples = std::floor(sampleRate * timeInSec);
+    int samples = std::round(sampleRate * timeInSec);
     //DBG("samples" << samples);
     return samples;
 }
@@ -42,7 +42,7 @@ float Utils::percentToFloat(int8 percent)
 
 float Utils::samplesToPercent(int samplePosition, int totalSamples)
 {
-    return std::floor( (samplePosition/(float) totalSamples) * 100);
+    return (samplePosition/(float) totalSamples) * 100.0;
 }
 
 void Utils::addToFb(FlexBox* fb, Component& c, int8 order, int minWidth,int minHeight) {

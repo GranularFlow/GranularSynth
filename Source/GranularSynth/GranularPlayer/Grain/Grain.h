@@ -25,6 +25,7 @@ public:
     // Setters
     // Audio
     void fillNextSamples(AudioBuffer<float>&, AudioBuffer<float>&, PlayerSettings*, int);
+    float interpolate(float, float, float, float, float);
     float getEnvelope();
 private:
     bool toDelete = false;

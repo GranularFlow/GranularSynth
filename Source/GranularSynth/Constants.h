@@ -31,7 +31,9 @@ const int8 NUM_BUFFERS = 100;
 // GranularPlayer enumToString
 const Array<String> GRANULAR_MODE = {"ORDER", "REV.ORDER", "MIRROR", "REV.MIRROR"};
 const Array<String> RUNNING_MODE = {"STATIC", "RUNNING"};
-const Array<String> PLAY_MODE = {"OFF", "ON"};
+const Array<String> MIDI_MODE = {"ON", "OFF"};
+const Array<String> WINDOW_TYPE = { "HALF SINE", "HANN", "TRIANGLE"};
+
 
 // ----------------------------
 // Colours for buttons and knobs

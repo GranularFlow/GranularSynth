@@ -33,18 +33,24 @@ void GranularVisualiser::paint(Graphics& g) {
         int step = std::ceil( (float)sampleCount / (float)getWidth());
         int index = 0;
 
+        Path p;
+        p.startNewSubPath(0, yOffset);
+
         for (int i = 0; i < sampleCount; i+= step) {
             float y = yOffset + (yOffset * (-waveForm[i])); // 0 ; 200
             if (y > 200 || y < 0)
             {
                 y = yOffset;
             }
-            g.drawLine(index, y, index, yOffset, 2.0f); // Draw from peak to middle
+            p.lineTo(index, y);
+            //g.drawLine(index, y, index, yOffset, 2.0f); // Draw from peak to middle
             index++;
             if (i + step > sampleCount){
                 break;
             }
         }
+        g.strokePath(p, PathStrokeType(PathStrokeType::curved), AffineTransform::identity);     
+        
     }
 }
 
@@ -52,12 +58,12 @@ void GranularVisualiser::setWaveForm(AudioBuffer<float>& audioBuffer) {
 
     waveForm.clear();
 
-    // Add only left channel
-    const float* channel = audioBuffer.getReadPointer(0);
+    const float* leftChannel = audioBuffer.getReadPointer(0);
+    const float* rightChannel = audioBuffer.getReadPointer(1);
 
     for (int i = 0; i < audioBuffer.getNumSamples(); ++i) {
         // copy its value for display
-        waveForm.add(channel[i]);
+        waveForm.add(leftChannel[i] > rightChannel[i] ? leftChannel[i] : rightChannel[i]);
     }
 
     waveformSet = true;

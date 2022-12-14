@@ -20,7 +20,7 @@
 class PlayerSettings : public Component
 {
 public:
-    enum GranularMode
+    static enum GranularMode
     {
         ORDER,
         REV_ORDER,
@@ -28,16 +28,23 @@ public:
         REV_MIRROR
     };
 
-    enum RunningMode
+    static enum RunningMode
     {
         STATIC,
         RUNNING
     };
 
-    enum PlayMode
+    static enum MidiMode
     {
         ON,
         OFF
+    };
+
+    static enum WindowType
+    {
+        HALF_SINE,
+        HANN,
+        TRIANGLE
     };
 
     // Class
@@ -50,12 +57,13 @@ public:
     // Tools
     bool isGranularMode(GranularMode);
     bool isRunningMode(RunningMode);
-    bool isPlayMode(PlayMode);
+    bool isMidiMode(MidiMode);
+    bool isWindowType(WindowType);
     // Getters
     int getNumGrains();
     int getGrainLength();
     float getGrainPitch();
-    float getGenerationSpeed();
+    float getGrainOffset();
     int getOffset();
     float getVolume();
     float getPan(int8 channel);
@@ -69,15 +77,17 @@ private:
     // Play style
     RadioBox granularModeRadioBox {"MODE", C_MARINE, GRANULAR_MODE};
     RadioBox runningModeRadioBox { "CURSOR", C_LAVENDER, RUNNING_MODE};
-    RadioBox playModeRadioBox { "MIDI", C_SUNFLOWER, PLAY_MODE};
+    RadioBox midiModeRadioBox { "MIDI", C_SUNFLOWER, MIDI_MODE};
+    RadioBox windowTypeRadioBox{ "WINDOW", C_MEDITERRANEAN, WINDOW_TYPE };
     // Grains
     Knob grainLengthKnob{ "LENGTH", C_MARTINA, 1, 1000, 1, 50 }; // ms
     Knob grainPitchKnob{ "PITCH", C_RADIANTYELLOW, 0.1, 1.9, 0.001, 1 }; // - 1 ; 1 x 
     Knob grainNumKnob{ "GRAINS", C_ENERGOS, 1, 25, 1, 5 }; // ms
-    Knob generationSpeedKnob { "SPEED", C_BARARED, 10, 1000, 0.01, 10 }; // ms how fast to generate new sample after creating last one
-    Knob grainOffsetKnob{ "OFFSET", C_MEDITERRANEAN, 0, 50000, 10, 0 }; // overlap in samples
+    Knob grainOffsetKnob { "OFFSET", C_BARARED, 1, 100, 1, 10 }; // ms how fast to generate new sample after creating last one
+    Knob cursorPositionKnob{ "POSITION", C_MEDITERRANEAN, 0, 50000, 10, 0 }; // cursor position
+
     // Master
-    Knob volumeKnob {"VOLUME", C_SUNFLOWER, 0, 100, 2, 50 }; // %
-    Knob panKnob { "PAN", C_BILLS, 0, 100, 2, 50 }; // %
+    Knob volumeKnob {"VOLUME", C_SUNFLOWER, 0, 100, 1, 50 }; // %
+    Knob panKnob { "PAN", C_BILLS, 0, 100, 1, 50 }; // %
     // ADSR
 };
