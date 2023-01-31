@@ -81,7 +81,7 @@ int GranularPlayer::getMaxSamples() {
 }
 
 void GranularPlayer::addGrain(int startPosition, int length) {    
-    auto tmp_grain = new Grain(startPosition, Utils::msToSamples(length, sampleRate), settings.getOffset(), settings.getGrainPitch(), settings.getVolume() * settings.getPan(0), settings.getVolume() * settings.getPan(1));
+    auto tmp_grain = new Grain(startPosition, Utils::msToSamples(length, sampleRate), 0, settings.getGrainPitch(), settings.getVolume() * settings.getPan(0), settings.getVolume() * settings.getPan(1));
     //DBG("adding grain " << Utils::msToSamples(length, sampleRate));
     grains.add(tmp_grain);
 }
@@ -103,7 +103,7 @@ void GranularPlayer::timerCallback()
         {
             cursorPosition += 10;
         }
-        if (settings.isGranularMode(PlayerSettings::REV_ORDER) || settings.isGranularMode(PlayerSettings::REV_MIRROR))
+        else if (settings.isGranularMode(PlayerSettings::REV_ORDER) || settings.isGranularMode(PlayerSettings::REV_MIRROR))
         {
             cursorPosition -= 10;
         }

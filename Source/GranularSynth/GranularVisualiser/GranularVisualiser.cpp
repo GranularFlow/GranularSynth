@@ -12,10 +12,12 @@
 
 GranularVisualiser::GranularVisualiser()
 {
+    
 }
 
 GranularVisualiser::~GranularVisualiser()
 {
+    stopTimer();
 }
 
 void GranularVisualiser::paint(Graphics& g) {
@@ -54,16 +56,39 @@ void GranularVisualiser::paint(Graphics& g) {
     }
 }
 
-void GranularVisualiser::setWaveForm(AudioBuffer<float>& audioBuffer) {
+void GranularVisualiser::setPntr(RingBuffer* ringPointer)
+{
+    DBG("Pointer set");
+    ringBufferPointer = ringPointer;
+    startTimer(2000);
+    DBG("timer started");
+}
+
+void GranularVisualiser::timerCallback()
+{
+    DBG("timer call");
+    if (ringBufferPointer != nullptr)
+    {
+        DBG("set wave");
+        setWaveForm(ringBufferPointer->getBuffer(), 144000);
+    }
+    else
+    {
+        DBG("Pointer MISSING");
+    }
+
+}
+
+void GranularVisualiser::setWaveForm(float * channel, int samples) {
 
     waveForm.clear();
 
-    const float* leftChannel = audioBuffer.getReadPointer(0);
-    const float* rightChannel = audioBuffer.getReadPointer(1);
+    float* leftChannel = channel;
 
-    for (int i = 0; i < audioBuffer.getNumSamples(); ++i) {
+    for (int i = 0; i < samples; ++i) {
         // copy its value for display
-        waveForm.add(leftChannel[i] > rightChannel[i] ? leftChannel[i] : rightChannel[i]);
+        waveForm.add(leftChannel[i]);
+        // leftChannel[i] > rightChannel[i] ? leftChannel[i] : rightChannel[i]
     }
 
     waveformSet = true;

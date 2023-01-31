@@ -43,37 +43,30 @@ int Grain::getDelete()
 
 void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>& destinationBuffer, PlayerSettings* settings, int totalSamples)
 {
-    float mirroredSample = 0;
-    float window = 0;
-    if (settings->isGranularMode(PlayerSettings::MIRROR))
-    {
-       
-    }
-    float percent = (currentPosition * 100.0 /(float) lengthInSamples);
+    
+    float window = 0.0f;
+    float percent = (currentPosition * 100.0 / (float)lengthInSamples);
+
     if (settings->isWindowType(PlayerSettings::HALF_SINE))
     {
         window = sin(3.14159 * percent / (float)100);
     }
-    if (settings->isWindowType(PlayerSettings::HANN))
+    else if (settings->isWindowType(PlayerSettings::HANN))
     {
         window = ( 0.5f * (1.0f - cos(2.0f * 3.14159f * (percent / (float)100.0)))); // Hann
     }
-    if (settings->isWindowType(PlayerSettings::TRIANGLE))
+    else if (settings->isWindowType(PlayerSettings::TRIANGLE))
     {
         window = (0.5f - (abs(percent - 50.0f) /(float) 50.0)); // Triangle
         
     }
-    //DBG("currentPosition" << currentPosition);
-    //DBG("percent" << percent);
     if ((window > 1))
     {
-        DBG("window");
+        DBG("window cracks");
     }
-    
-
     for (int i = 0; i < destinationBuffer.getNumSamples(); i++) {
 
-        if (currentPosition > lengthInSamples || currentPosition < -lengthInSamples) {
+        if (abs(currentPosition) > lengthInSamples) {
             toDelete = true;
             return;
         }
@@ -84,7 +77,7 @@ void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>
             auto src = sourceBuffer.getReadPointer(channel);
             float totalPosition = fmod((startingPosition + currentPosition) * pitch, sourceBuffer.getNumSamples());
 
-            if (totalPosition < 0 || totalPosition - 2 < 0)
+            if (totalPosition < 0)
             {
                 totalPosition = sourceBuffer.getNumSamples() - fmod(abs(totalPosition), sourceBuffer.getNumSamples());
             }
@@ -98,26 +91,42 @@ void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>
             
             if (settings->isGranularMode(PlayerSettings::MIRROR) || settings->isGranularMode(PlayerSettings::REV_MIRROR))
             {
-                totalPosition = sourceBuffer.getNumSamples() - totalPosition;
-                mirroredSample = interpolate(totalPosition, (int)std::floor(totalPosition) % sourceBuffer.getNumSamples(), (int)std::ceil(totalPosition - 1) % sourceBuffer.getNumSamples(), src[(int)std::floor(totalPosition) % sourceBuffer.getNumSamples()], src[(int)std::ceil(totalPosition + 1) % sourceBuffer.getNumSamples()]);
+                totalPosition = fmod((startingPosition - currentPosition) * pitch, sourceBuffer.getNumSamples());
+
+                if (totalPosition < 0)
+                {
+                    totalPosition = fmod(sourceBuffer.getNumSamples() + totalPosition, sourceBuffer.getNumSamples());
+                    //DBG("totalPosition" << totalPosition);
+                }
+
+                //DBG("totalPosition" << totalPosition);
+                float mirroredSample = interpolate(totalPosition, (int)std::floor(totalPosition) % sourceBuffer.getNumSamples(), (int)std::ceil(totalPosition + 1) % sourceBuffer.getNumSamples(), src[(int)std::floor(totalPosition) % sourceBuffer.getNumSamples()], src[(int)std::ceil(totalPosition + 1) % sourceBuffer.getNumSamples()]);
+                
+                if (mirroredSample != 0.0f)
+                {
+                    if (abs(mirroredSample) > 0.999f)
+                    {
+                        DBG("mirroredSample crack" << mirroredSample);
+                    }
+                    finalSample = (finalSample + mirroredSample) / (float)2.0f;
+                }
             }
-            if (mirroredSample > 0)
+
+            
+            if (abs(finalSample) >= 0.9999f)
             {
-                finalSample = (finalSample + mirroredSample) / (float)2.0;
+                DBG("sample crack" << finalSample);
+                finalSample = 0;
             }
-            if (finalSample > 1.0)
-            {
-                DBG("clin");
-            }
-            destinationBuffer.getWritePointer(channel)[i] += finalSample * volume[channel] * window;
+            destinationBuffer.getWritePointer(channel)[i] += (finalSample * volume[channel] * window) /(float)( settings->getNumGrains()*0.1f);
         }
 
 
-        if (settings->isGranularMode(settings->ORDER) || settings->isGranularMode(settings->MIRROR))
+        if (settings->isGranularMode(PlayerSettings::ORDER) || settings->isGranularMode(PlayerSettings::MIRROR))
         {
             currentPosition++;
         }
-        if (settings->isGranularMode(settings->REV_ORDER) || settings->isGranularMode(PlayerSettings::REV_MIRROR))
+        else if (settings->isGranularMode(PlayerSettings::REV_ORDER) || settings->isGranularMode(PlayerSettings::REV_MIRROR))
         {
             currentPosition--;
         }
@@ -128,7 +137,6 @@ void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>
 
 float Grain::interpolate(float x, float x1, float x2, float y1, float y2)
 {
-
     return y1 + ((x - x1) * ((y2 - y1) / (x2 - x1)));
 }
 

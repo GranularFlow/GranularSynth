@@ -23,21 +23,27 @@ void AudioLoad::clear()
     totalSamples = 0;
 }
 
-void AudioLoad::fillBuffer(AudioBuffer<float>& bufferToFill, int numSamplesToFill) {
+void AudioLoad::fillBuffer(AudioBuffer<float>& bufferToFill, int numSamplesToFill, File audioFile) {
     AudioFormatManager formatManager;
     formatManager.registerBasicFormats();
 
-    File file = File("d:/my.wav");
+    if (audioFile != juce::File{}) {
+        DBG("isnt file empty");
+        std::unique_ptr<AudioFormatReader> reader(formatManager.createReaderFor(audioFile));
 
-    std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(file));
+        int minFill = 0;
 
-    int minFill=0;
-
-    if (reader != nullptr)
+        if (reader != nullptr)
+        {
+            DBG("reader can read");
+            minFill = (numSamplesToFill == -1) ? reader->lengthInSamples : numSamplesToFill;
+            reader->read(&bufferToFill, 0, minFill, 0, true, true);
+            samplePosition += minFill;
+        }
+    }
+    else
     {
-        minFill = (numSamplesToFill == -1 )? reader->lengthInSamples : numSamplesToFill;        
-        reader->read(&bufferToFill, 0, minFill, 0, true, true);
-    }     
+        DBG("failed");
+    }
 
-    samplePosition += minFill;
 }

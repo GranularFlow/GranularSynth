@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="OmDVsr" name="GranularSynth" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
-              pluginCharacteristicsValue="pluginIsSynth" pluginVST3Category="Stereo">
+              pluginCharacteristicsValue="pluginWantsMidiIn" pluginVST3Category="Fx,Stereo">
   <MAINGROUP id="burg7H" name="GranularSynth">
     <GROUP id="{23605F32-A499-0F59-37AF-F197DB7A76C3}" name="Source">
       <GROUP id="{C3E121C5-2CF5-65FC-929B-A0B6AB43CBEE}" name="AudioLoad">
@@ -10,6 +10,10 @@
         <FILE id="x9GwOo" name="AudioLoad.h" compile="0" resource="0" file="Source/AudioLoad/AudioLoad.h"/>
       </GROUP>
       <GROUP id="{6216BDE6-8DD9-67D0-09C3-F93C0EF4502C}" name="GranularSynth">
+        <GROUP id="{C8D14C24-6F05-30AF-148E-A53DC3D2203F}" name="RingBuffer">
+          <FILE id="Y6mRwb" name="RingBuffer.cpp" compile="1" resource="0" file="Source/GranularSynth/RingBuffer/RingBuffer.cpp"/>
+          <FILE id="ksGUuL" name="RingBuffer.h" compile="0" resource="0" file="Source/GranularSynth/RingBuffer/RingBuffer.h"/>
+        </GROUP>
         <GROUP id="{7F391BFB-B1F1-1AE4-A653-4960B78C2016}" name="CustomSetting">
           <FILE id="cy8YFn" name="CustomLook.cpp" compile="1" resource="0" file="Source/GranularSynth/CustomSetting/CustomLook.cpp"/>
           <FILE id="tiDLsc" name="CustomLook.h" compile="0" resource="0" file="Source/GranularSynth/CustomSetting/CustomLook.h"/>

@@ -64,7 +64,7 @@ public:
     int getGrainLength();
     float getGrainPitch();
     float getGrainOffset();
-    int getOffset();
+    //int getOffset();
     float getVolume();
     float getPan(int8 channel);
     // Setters
@@ -84,7 +84,7 @@ private:
     Knob grainPitchKnob{ "PITCH", C_RADIANTYELLOW, 0.1, 1.9, 0.001, 1 }; // - 1 ; 1 x 
     Knob grainNumKnob{ "GRAINS", C_ENERGOS, 1, 25, 1, 5 }; // ms
     Knob grainOffsetKnob { "OFFSET", C_BARARED, 1, 100, 1, 10 }; // ms how fast to generate new sample after creating last one
-    Knob cursorPositionKnob{ "POSITION", C_MEDITERRANEAN, 0, 50000, 10, 0 }; // cursor position
+    //Knob cursorPositionKnob{ "POSITION", C_MEDITERRANEAN, 0, 50000, 10, 0 }; // cursor position
 
     // Master
     Knob volumeKnob {"VOLUME", C_SUNFLOWER, 0, 100, 1, 50 }; // %

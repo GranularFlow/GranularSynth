@@ -20,6 +20,7 @@ GranularSynth::GranularSynth()
 GranularSynth::~GranularSynth()
 {
     removeListeners();
+    ringBuffer == nullptr;
 }
 
 void GranularSynth::initGui()
@@ -61,6 +62,7 @@ void GranularSynth::paintLogoOnce(Graphics& g)
 
 void GranularSynth::addListeners() {
     granularSettings.openAudioButton.addListener(this);
+    granularSettings.openBufferButton.addListener(this);
     granularSettings.timeLengthNum.slider.addListener(this);
     granularSettings.playerSelectNum.slider.addListener(this);
     granularSettings.playerCountNum.slider.addListener(this);
@@ -73,26 +75,38 @@ void GranularSynth::removeListeners(){
     granularSettings.playerCountNum.slider.removeListener(this);
 }
 
-void GranularSynth::loadAudioIntoSamples()
-{
+void GranularSynth::loadAudioFromFile(File file)
+{   
+    DBG("loadAudioFromFile " << file.getFullPathName());
+
     AudioLoad audioLoad;
 
     audioSamples.setSize(2, getNumTotalSamples());
 
     // DOCS: The contents of the buffer will initially be undefined, so use clear() to set all the samples to zero.        
     audioSamples.clear();
-
-    // Fetch data to buffer
-    audioLoad.fillBuffer(audioSamples, getNumTotalSamples());
+   
+    audioLoad.fillBuffer(audioSamples, getNumTotalSamples(), file);    
 
     // Push into visualiser only one channel
-    granularVisualiser.setWaveForm(audioSamples);
+    granularVisualiser.setWaveForm(audioSamples.getWritePointer(0), audioSamples.getNumSamples());
 
     // Check to start playing
     waveFormWasSet = true;
 
     // Get rid off audioLoader - otherwise causes crashes and leaks
     audioLoad.clear();
+}
+
+void GranularSynth::loadAudioIntoSamples()
+{    
+    File audioFile;
+
+    fileChooser = std::make_unique<juce::FileChooser>("Select a Wave file...", juce::File{}, "*.wav");
+
+    fileChooser->launchAsync({}, [this](const FileChooser& fc) {
+        loadAudioFromFile(fc.getResult());
+    });
 }
 
 int GranularSynth::getNumTotalSamples() {
@@ -102,7 +116,24 @@ int GranularSynth::getNumTotalSamples() {
 }
 
 void GranularSynth::initAudioSamples(int numberToInit) {
+    AudioBuffer<float> tmpBuffer;
+    if (waveFormWasSet)
+    {        
+        tmpBuffer.makeCopyOf(audioSamples);
+    }
+
     audioSamples.setSize(2, numberToInit);
+    audioSamples.clear();
+
+    if (waveFormWasSet)
+    {
+        int minSamples = jmin(numberToInit, audioSamples.getNumSamples());
+        //int destChannel, int destStartSample, const AudioBuffer &source, int sourceChannel, int sourceStartSample, int numSample
+        audioSamples.copyFrom(0, 0, tmpBuffer, 0, 0, minSamples);
+        audioSamples.copyFrom(1, 0, tmpBuffer, 1, 0, minSamples);
+        DBG("pause");
+    }
+
 }
 
 void GranularSynth::clearAudioSamples() {
@@ -113,9 +144,21 @@ void GranularSynth::sliderValueChanged(Slider* slider)
 {
     if (slider == &granularSettings.timeLengthNum.slider)
     {
-        maxPlayTime = static_cast<int>(slider->getValue());
-        clearAudioSamples();
-        initAudioSamples(getNumTotalSamples());
+        if (waveFormWasSet)
+        {
+        
+            if (inputFromFile)
+            {
+                maxPlayTime = static_cast<int>(slider->getValue());
+                initAudioSamples(getNumTotalSamples());
+                loadAudioIntoSamples();
+            }
+            else if (!inputFromFile)
+            {
+                maxPlayTime = static_cast<int>(slider->getValue());
+                initAudioSamples(getNumTotalSamples());                
+            }
+        }
     }
     else if (slider == &granularSettings.playerCountNum.slider) {
         int8 val = static_cast<int8>(slider->getValue());
@@ -163,10 +206,24 @@ void GranularSynth::buttonClicked(Button* buttonClicked)
 {
     if (buttonClicked == &granularSettings.openAudioButton)
     {       
+        inputFromFile = true;
         loadAudioIntoSamples();
         // Create new player after loading
         granularSettings.enablePlayers();
         granularSettings.openAudioButton.setVisible(false);
+        granularSettings.openBufferButton.setVisible(false);
+    }
+    if (buttonClicked == &granularSettings.openBufferButton)
+    {
+        inputFromFile = false;
+        // load from buffer
+        // Create new player after loading
+        granularSettings.enablePlayers();
+        granularSettings.openAudioButton.setVisible(false);
+        granularSettings.openBufferButton.setVisible(false);
+        ringBuffer = new RingBuffer();
+        granularVisualiser.setPntr(ringBuffer);
+        waveFormWasSet = true;
     }
 }
 
@@ -203,13 +260,27 @@ void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
 {
     if (!waveFormWasSet)
     {
+        bufferToFill.clear();
         return;
     }
 
-    for (GranularPlayer* player : granularPlayers)
+    if (inputFromFile)
     {
+        bufferToFill.clear();
 
-        player->fillNextBuffer(bufferToFill, audioSamples);
+        for (GranularPlayer* player : granularPlayers)
+        {
+            player->fillNextBuffer(bufferToFill, audioSamples);
+        }
+    }
+    else {
+        ringBuffer->addBuffer(bufferToFill);
+        bufferToFill.clear();
+        for (GranularPlayer* player : granularPlayers)
+        {
+            player->fillNextBuffer(bufferToFill, ringBuffer->ringBuffer);
+        }
+             
     }
 }
 

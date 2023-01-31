@@ -20,9 +20,17 @@
 class GranularSettings : public Component
 {
 public:
+    enum INPUT
+    {
+        BUFFER,
+        FILE
+    };
+
     // Class
     GranularSettings();
     ~GranularSettings() override;
+    // Utils
+    void addComponents();
     // GUI
     void enablePlayers();
     void paint (Graphics&) override;
@@ -30,11 +38,14 @@ public:
 
     // Buffer length - number of buffers to play from
     NumberSelect timeLengthNum{ "Length", C_ANDROID ,1.0, 3.0, 0.1, 3.0 };
+    TextButton openBufferButton{ "BUFFER" };
     // Open file button
-    TextButton openAudioButton{ "Open File" };
+    TextButton openAudioButton{ "FILE" };
     // Player settings
     NumberSelect playerCountNum{ "Count", C_BARARED, 0, 3, 1, 0 };
     NumberSelect playerSelectNum{ "Select", C_MARINE, 0, 3, 1, 0 };
+
+   
 
 private:
 

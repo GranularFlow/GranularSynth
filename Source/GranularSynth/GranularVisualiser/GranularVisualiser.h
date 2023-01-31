@@ -12,9 +12,9 @@
 
 #include <JuceHeader.h>
 #include "../Constants.h"
+#include "../RingBuffer/RingBuffer.h"
 
-
-class GranularVisualiser : public Component
+class GranularVisualiser : public Component, public Timer
 {
 public:
     // Class
@@ -23,13 +23,15 @@ public:
     // GUI
     void paint(Graphics& g) override;
     // Callbacks
+    void setPntr(RingBuffer*);
+    void timerCallback() override;
     // Setters
-    void setWaveForm(AudioBuffer<float>&);
+    void setWaveForm(float *, int);
 
 private:
+    RingBuffer* ringBufferPointer = nullptr;
     // Array of float*
     Array<float> waveForm;
     bool waveformSet = false;
-
 };
 

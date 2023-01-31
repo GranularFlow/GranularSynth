@@ -14,19 +14,25 @@
 //==============================================================================
 GranularSettings::GranularSettings()
 {
+    addComponents();
+}
+
+GranularSettings::~GranularSettings()
+{
+   
+}
+
+void GranularSettings::addComponents()
+{
+    addAndMakeVisible(openBufferButton);
     addAndMakeVisible(timeLengthNum);
-    addAndMakeVisible(openAudioButton);  
+    addAndMakeVisible(openAudioButton);
     addChildComponent(playerSelectNum);
     addChildComponent(playerCountNum);
 
     timeLengthNum.clearTop();
     playerSelectNum.clearTop();
     playerCountNum.clearTop();
-}
-
-GranularSettings::~GranularSettings()
-{
-   
 }
 
 void GranularSettings::enablePlayers()
@@ -56,11 +62,13 @@ void GranularSettings::resized()
            FlexBox::JustifyContent::flexEnd
     };
 
-    Utils::addToFb(&fb, openAudioButton, 0, 100, getHeight());
+    Utils::addToFb(&fb, openBufferButton, 0, 100, getHeight());
 
-    Utils::addToFb(&fb, timeLengthNum, 1, 100, getHeight());
-    Utils::addToFb(&fb, playerCountNum, 2, 100, getHeight());
-    Utils::addToFb(&fb, playerSelectNum, 3, 100, getHeight());
+    Utils::addToFb(&fb, openAudioButton, 1, 100, getHeight());
+
+    Utils::addToFb(&fb, timeLengthNum, 2, 100, getHeight());
+    Utils::addToFb(&fb, playerCountNum, 3, 100, getHeight());
+    Utils::addToFb(&fb, playerSelectNum, 4, 100, getHeight());
 
     fb.performLayout(getLocalBounds().withTrimmedLeft(250));
 }

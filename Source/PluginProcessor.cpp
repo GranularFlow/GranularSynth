@@ -35,7 +35,6 @@ void GranularSynthAudioProcessor::prepareToPlay(double sampleRate, int samplesPe
 
 void GranularSynthAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    buffer.clear();
     granularSynth.getNextBlock(buffer);
 }
 

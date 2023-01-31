@@ -38,7 +38,7 @@ void PlayerSettings::initGui() {
     addAndMakeVisible(grainPitchKnob);
     addAndMakeVisible(grainNumKnob);
     addAndMakeVisible(grainOffsetKnob);
-    addAndMakeVisible(cursorPositionKnob);
+    //addAndMakeVisible(cursorPositionKnob);
     // Master
     addAndMakeVisible(volumeKnob);
     addAndMakeVisible(panKnob);
@@ -90,7 +90,7 @@ void PlayerSettings::resized() {
     tmpFB2.items.add(FlexItem(grainPitchKnob).withOrder(2).withMinWidth(tmp_width).withMinHeight(tmp_height));
     tmpFB2.items.add(FlexItem(grainNumKnob).withOrder(3).withMinWidth(tmp_width).withMinHeight(tmp_height));
     tmpFB2.items.add(FlexItem(grainOffsetKnob).withOrder(4).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    tmpFB2.items.add(FlexItem(cursorPositionKnob).withOrder(5).withMinWidth(tmp_width).withMinHeight(tmp_height));
+    //tmpFB2.items.add(FlexItem(cursorPositionKnob).withOrder(5).withMinWidth(tmp_width).withMinHeight(tmp_height));
     // Add column to final flex box  
     fb.items.add(FlexItem(tmpFB2).withOrder(3).withMinWidth(sectionWidth).withHeight(sectionHeight));
 
@@ -147,10 +147,10 @@ float PlayerSettings::getGrainOffset()
     return (float)grainOffsetKnob.getValue();
 }
 
-int PlayerSettings::getOffset()
+/*int PlayerSettings::getOffset()
 {
     return cursorPositionKnob.getValue();
-}
+}*/
 
 float PlayerSettings::getVolume()
 {

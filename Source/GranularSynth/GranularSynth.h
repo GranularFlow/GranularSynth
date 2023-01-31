@@ -17,7 +17,7 @@
 #include "GranularPlayer/GranularPlayer.h"
 #include "GranularVisualiser/GranularVisualiser.h"
 #include "GranularSettings/GranularSettings.h"
-
+#include "RingBuffer/RingBuffer.h"
 
 class GranularSynth : public Component, public Slider::Listener, public Button::Listener
 {
@@ -36,6 +36,7 @@ public:
     void addListeners();
     void removeListeners();
     // Tools
+    void loadAudioFromFile(File);
     void loadAudioIntoSamples();
     int getNumTotalSamples();
     void initAudioSamples(int);
@@ -49,6 +50,8 @@ public:
     int8 getPlayerCount();
 
 private:
+
+    std::unique_ptr<juce::FileChooser> fileChooser;
     // Players    
 	OwnedArray<GranularPlayer> granularPlayers; //Owned array is similar to uniquePtr array
     // Visualiser
@@ -57,10 +60,13 @@ private:
     GranularSettings granularSettings;    
     // Samples [channel][sample]
     AudioBuffer<float> audioSamples {2, 256};
+    // Ring buffer
+    RingBuffer* ringBuffer;
 
     int bufferSize = 256;
     int sampleRate = 48000;
     float maxPlayTime = 3.0; // 3s   
     // Buffer check
     bool waveFormWasSet = false;
+    bool inputFromFile = true;
 };
