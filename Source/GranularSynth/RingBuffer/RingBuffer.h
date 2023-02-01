@@ -16,16 +16,13 @@ class RingBuffer
 public:
 	RingBuffer();
 	~RingBuffer();
-    void addBuffer(AudioBuffer<float>);
-    void fillBuffer(AudioBuffer<float>);
-    float * getBuffer();
-
-    int maxSamples = 144000;
-    AudioBuffer<float> ringBuffer{ 2, 144000 };
-private:
+    void addBuffer(AudioBuffer<float>&);
+    void fillBuffer(AudioBuffer<float>&);
+    AudioBuffer<float>& getBuffer();   
     
-    //float leftChannel[144000] = { 0.0f };
-    //float rightChannel[144000] = { 0.0f };
+private:
+    int maxSamples = 144000;
+    AudioBuffer<float> ringBuffer { 2, 144000 };
     int writePosition = 77000;
     int readPosition = 0;
 };

@@ -24,7 +24,7 @@ public:
     int getDelete();
     // Setters
     // Audio
-    void fillNextSamples(AudioBuffer<float>&, AudioBuffer<float>&, PlayerSettings*, int);
+    void fillNextSamples(AudioBuffer<float>&, AudioBuffer<float>&, PlayerSettings*, int, float);
     float interpolate(float, float, float, float, float);
     float getEnvelope();
 private:

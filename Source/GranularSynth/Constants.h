@@ -32,7 +32,7 @@ const int8 NUM_BUFFERS = 100;
 const Array<String> INPUT_TYPE = { "BUFFER", "FILE" };
 const Array<String> GRANULAR_MODE = {"ORDER", "REV.ORDER", "MIRROR", "REV.MIRROR"};
 const Array<String> RUNNING_MODE = {"STATIC", "RUNNING"};
-const Array<String> MIDI_MODE = {"ON", "OFF"};
+const Array<String> MIDI_MODE = {"OFF", "ON"};
 const Array<String> WINDOW_TYPE = { "HALF SINE", "HANN", "TRIANGLE"};
 
 

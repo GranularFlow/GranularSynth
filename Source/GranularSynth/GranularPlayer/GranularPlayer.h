@@ -50,7 +50,8 @@ public:
 	int calculateStep();
 	int percentToSamplePosition(int8);
     // Getters
-	void fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples);
+	void fillNextBuffer(AudioBuffer<float>&, AudioBuffer<float>&);
+	void fillNextBuffer(AudioBuffer<float>&, AudioBuffer<float>&, float);
 	int getGrainNumSamples();
 	PlayerCursor* getCursor();
 	// Setters

@@ -35,7 +35,25 @@ void GranularSynthAudioProcessor::prepareToPlay(double sampleRate, int samplesPe
 
 void GranularSynthAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    granularSynth.getNextBlock(buffer);
+    /*MidiBuffer::Iterator iter(midiMessages);
+    MidiMessage midiMsg;
+    int midiPos;
+    iter.getNextEvent(midiMsg, midiPos);
+    DBG("midiMsg" << midiMsg.getNoteNumber());*/
+    /*for (auto msg : midiMessages)
+    {
+        MidiMessage ms = msg.getMessage();
+        DBG("midiMessage" << ms.getNoteNumber());
+        if (ms.isNoteOn())
+        {
+            DBG("ON");
+        }
+        else
+        {
+            DBG("OFF");
+        }
+    }*/
+    granularSynth.getNextBlock(buffer, midiMessages);
 }
 
 //==============================================================================

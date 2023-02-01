@@ -41,7 +41,7 @@ int Grain::getDelete()
     return toDelete;
 }
 
-void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>& destinationBuffer, PlayerSettings* settings, int totalSamples)
+void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>& destinationBuffer, PlayerSettings* settings, int totalSamples, float increment)
 {
     
     float window = 0.0f;
@@ -75,7 +75,7 @@ void Grain::fillNextSamples(AudioBuffer<float>& sourceBuffer, AudioBuffer<float>
         {
             // Apply envelope, apply volume, apply panning+
             auto src = sourceBuffer.getReadPointer(channel);
-            float totalPosition = fmod((startingPosition + currentPosition) * pitch, sourceBuffer.getNumSamples());
+            float totalPosition = fmod((startingPosition + currentPosition) * pitch * increment, sourceBuffer.getNumSamples());
 
             if (totalPosition < 0)
             {

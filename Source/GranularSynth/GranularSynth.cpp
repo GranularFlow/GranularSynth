@@ -20,7 +20,12 @@ GranularSynth::GranularSynth()
 GranularSynth::~GranularSynth()
 {
     removeListeners();
-    ringBuffer == nullptr;
+    ringBufferPntr = nullptr;
+    DBG("~GranularSynth");
+    if (ringBufferPntr == nullptr)
+    {
+        DBG("~True nullpointer");
+    }
 }
 
 void GranularSynth::initGui()
@@ -75,6 +80,25 @@ void GranularSynth::removeListeners(){
     granularSettings.playerCountNum.slider.removeListener(this);
 }
 
+void GranularSynth::handleMidi(MidiBuffer& midiMessages)
+{
+    MidiBuffer::Iterator iter(midiMessages);
+    MidiMessage midiMsg;
+    int midiPos;
+    iter.getNextEvent(midiMsg, midiPos);
+    if (midiMsg.isNoteOn() && midiMsg.getNoteNumber() != lastMidiNote)
+    {
+        midiNoteOn = true;
+        lastMidiNote = midiMsg.getNoteNumber();
+        increment = std::powf(2.f, (midiMsg.getNoteNumber() - 69.f) / 12.f);
+    }
+    else if (midiMsg.isNoteOff() && midiMsg.getNoteNumber() == lastMidiNote)
+    {
+        midiNoteOn = false;
+        increment = 1.0f;
+    }
+}
+
 void GranularSynth::loadAudioFromFile(File file)
 {   
     DBG("loadAudioFromFile " << file.getFullPathName());
@@ -89,7 +113,7 @@ void GranularSynth::loadAudioFromFile(File file)
     audioLoad.fillBuffer(audioSamples, getNumTotalSamples(), file);    
 
     // Push into visualiser only one channel
-    granularVisualiser.setWaveForm(audioSamples.getWritePointer(0), audioSamples.getNumSamples());
+    granularVisualiser.setWaveForm(audioSamples);
 
     // Check to start playing
     waveFormWasSet = true;
@@ -221,8 +245,8 @@ void GranularSynth::buttonClicked(Button* buttonClicked)
         granularSettings.enablePlayers();
         granularSettings.openAudioButton.setVisible(false);
         granularSettings.openBufferButton.setVisible(false);
-        ringBuffer = new RingBuffer();
-        granularVisualiser.setPntr(ringBuffer);
+        ringBufferPntr = new RingBuffer();
+        granularVisualiser.setPntr(ringBufferPntr);
         waveFormWasSet = true;
     }
 }
@@ -256,7 +280,7 @@ void GranularSynth::selectPlayer(int8 playerNumber) {
     granularPlayers[playerNumber - 1]->toFront(true);
 }
 
-void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
+void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill, MidiBuffer& midiMessages)
 {
     if (!waveFormWasSet)
     {
@@ -270,15 +294,38 @@ void GranularSynth::getNextBlock(AudioBuffer<float>& bufferToFill)
 
         for (GranularPlayer* player : granularPlayers)
         {
-            player->fillNextBuffer(bufferToFill, audioSamples);
+            if (player->isCurrentMidiMode(PlayerSettings::MidiMode::ON))
+            {
+                handleMidi(midiMessages);
+                if (midiNoteOn)
+                {
+                    player->fillNextBuffer(bufferToFill, audioSamples, increment);
+                }
+            }
+            else
+            {
+                player->fillNextBuffer(bufferToFill, audioSamples);
+            }
         }
     }
     else {
-        ringBuffer->addBuffer(bufferToFill);
+        ringBufferPntr->addBuffer(bufferToFill);
         bufferToFill.clear();
         for (GranularPlayer* player : granularPlayers)
         {
-            player->fillNextBuffer(bufferToFill, ringBuffer->ringBuffer);
+            if (player->isCurrentMidiMode(PlayerSettings::MidiMode::ON))
+            {
+                handleMidi(midiMessages);
+                if (midiNoteOn)
+                {
+                    player->fillNextBuffer(bufferToFill, ringBufferPntr->getBuffer(), increment);
+                }
+            }
+            else
+            {
+                player->fillNextBuffer(bufferToFill, ringBufferPntr->getBuffer());
+
+            }
         }
              
     }

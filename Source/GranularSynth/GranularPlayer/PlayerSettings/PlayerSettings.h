@@ -36,8 +36,8 @@ public:
 
     static enum MidiMode
     {
-        ON,
-        OFF
+        OFF,
+        ON
     };
 
     static enum WindowType

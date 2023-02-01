@@ -26,11 +26,10 @@ public:
     void setPntr(RingBuffer*);
     void timerCallback() override;
     // Setters
-    void setWaveForm(float *, int);
+    void setWaveForm(AudioBuffer<float>&);
 
 private:
     RingBuffer* ringBufferPointer = nullptr;
-    // Array of float*
     Array<float> waveForm;
     bool waveformSet = false;
 };

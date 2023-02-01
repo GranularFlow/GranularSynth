@@ -143,6 +143,11 @@ int GranularPlayer::percentToSamplePosition(int8 newCursorPositionPercent)
 
 void GranularPlayer::fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples)
 {
+    fillNextBuffer(toFill, sourceSamples, 1.f);
+}
+
+void GranularPlayer::fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<float>& sourceSamples, float increment)
+{
 
     Array<int8> deleteArray;
     for (int i = 0; i < grains.size(); i++)
@@ -155,7 +160,7 @@ void GranularPlayer::fillNextBuffer(AudioBuffer<float>& toFill, AudioBuffer<floa
             }
             else
             {
-                grains[i]->fillNextSamples(sourceSamples, toFill, &settings, totalSamples);
+                grains[i]->fillNextSamples(sourceSamples, toFill, &settings, totalSamples, increment);
             }
         }        
     }

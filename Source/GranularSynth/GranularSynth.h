@@ -36,6 +36,7 @@ public:
     void addListeners();
     void removeListeners();
     // Tools
+    void handleMidi(MidiBuffer&);
     void loadAudioFromFile(File);
     void loadAudioIntoSamples();
     int getNumTotalSamples();
@@ -46,7 +47,7 @@ public:
     void removePlayer();
     void selectPlayer(int8 playerNumber);
     // Getters
-    void getNextBlock(AudioBuffer<float>&);
+    void getNextBlock(AudioBuffer<float>&, MidiBuffer&);
     int8 getPlayerCount();
 
 private:
@@ -61,12 +62,15 @@ private:
     // Samples [channel][sample]
     AudioBuffer<float> audioSamples {2, 256};
     // Ring buffer
-    RingBuffer* ringBuffer;
+    RingBuffer* ringBufferPntr;
 
+    float increment = 1.0f;
+    int lastMidiNote = -1;
     int bufferSize = 256;
     int sampleRate = 48000;
     float maxPlayTime = 3.0; // 3s   
     // Buffer check
     bool waveFormWasSet = false;
+    bool midiNoteOn = false;
     bool inputFromFile = true;
 };
