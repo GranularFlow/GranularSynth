@@ -26,7 +26,6 @@ GranularSynthAudioProcessorEditor::~GranularSynthAudioProcessorEditor()
 //==============================================================================
 void GranularSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    Utils::paintLogo(g);
 }
 
 void GranularSynthAudioProcessorEditor::resized()

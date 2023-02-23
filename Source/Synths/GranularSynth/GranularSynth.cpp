@@ -42,6 +42,7 @@ inline void GranularSynth::paint(Graphics& g)
 {
     // Background
     g.fillAll(C_DARK);
+    Utils::paintLogo(g);
 }
 
 void GranularSynth::resized()
