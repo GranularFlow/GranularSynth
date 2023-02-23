@@ -26,7 +26,7 @@ GranularSynthAudioProcessorEditor::~GranularSynthAudioProcessorEditor()
 //==============================================================================
 void GranularSynthAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
+    Utils::paintLogo(g);
 }
 
 void GranularSynthAudioProcessorEditor::resized()

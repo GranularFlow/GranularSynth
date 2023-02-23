@@ -49,7 +49,7 @@ public:
 
 private:
 
-    std::unique_ptr<juce::FileChooser> fileChooser;
+    std::unique_ptr<juce::FileChooser> fileChooser = nullptr;
     // Players    
 	OwnedArray<GranularPlayer> granularPlayers; //Owned array is similar to uniquePtr array
     // Visualiser
@@ -59,7 +59,7 @@ private:
     // Samples [channel][sample]
     AudioBuffer<float> audioSamples {2, 256};
     // Ring buffer
-    RingBuffer* ringBufferPntr;
+    RingBuffer* ringBufferPntr = nullptr;
 
     float increment = 1.0f;
     int lastMidiNote = -1;

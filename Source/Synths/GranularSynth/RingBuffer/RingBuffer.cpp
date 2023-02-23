@@ -17,8 +17,7 @@ RingBuffer::RingBuffer()
 
 RingBuffer::~RingBuffer()
 {
-    ringBuffer.clear();
-    DBG("~RingBuffer");
+    
 }
 
 void RingBuffer::addBuffer(AudioBuffer<float>& inputBuffer)

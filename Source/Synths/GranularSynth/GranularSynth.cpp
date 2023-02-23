@@ -20,11 +20,15 @@ GranularSynth::GranularSynth()
 GranularSynth::~GranularSynth()
 {
     removeListeners();
-    ringBufferPntr = nullptr;
-    DBG("~GranularSynth");
-    if (ringBufferPntr == nullptr)
+    audioSamples.clear();
+    if (fileChooser != nullptr)
     {
-        DBG("~True nullpointer");
+        fileChooser = nullptr;
+    }
+    if (ringBufferPntr != nullptr)
+    {
+        delete ringBufferPntr;
+        ringBufferPntr = nullptr;
     }
 }
 
