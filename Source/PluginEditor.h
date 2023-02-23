@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "GranularSynth/Constants.h"
+#include "Utils/Constants.h"
 
 //==============================================================================
 

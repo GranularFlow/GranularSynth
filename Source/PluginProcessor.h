@@ -9,7 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "GranularSynth/GranularSynth.h"
+#include "Synths/GranularSynth/GranularSynth.h"
 
 //==============================================================================
 /**

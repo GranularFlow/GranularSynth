@@ -1,32 +1,5 @@
-Builds
-cmake-build-debug
-.idea/
-# VS files
-/GranularSynth_SharedCode.vcxproj
-/GranularSynth_StandalonePlugin.vcxproj.filters
-/GranularSynth_StandalonePlugin.vcxproj.user
-/GranularSynth_VST3.vcxproj.filters
-/GranularSynth_VST3.vcxproj
-/resources.rc
-/GranularSynth_StandalonePlugin.vcxproj
-/GranularSynth_SharedCode.vcxproj.filters
-/x64/Debug/Shared Code/
-/x64/Debug/Standalone Plugin/GranularSynth.exe.recipe
-/x64/Debug/Standalone Plugin/*.tlog
-/x64/Debug/Standalone Plugin/GranularSynth.ilk
-/x64/Debug/Standalone Plugin/GranularSynth.pdb
-/x64/Debug/Standalone Plugin/GranularSynth_StandalonePlugin.vcxproj.FileListAbsolute.txt
-/x64/Debug/Standalone Plugin/include_juce_audio_plugin_client_Standalone.obj
-/x64/Debug/Standalone Plugin/resources.res
-/.vs/
-/x64/Debug/VST3/*.tlog/
-/x64/Debug/VST3/GranularSynth.exp
-/x64/Debug/VST3/GranularSynth.lib
-/x64/Debug/VST3/GranularSynth.pdb
-/x64/Debug/VST3/GranularSynth.vst3.recipe
-/x64/Debug/VST3/GranularSynth_VST3.log
-/x64/Debug/VST3/GranularSynth.ilk
-/x64/Debug/VST3/GranularSynth_VST3.vcxproj.FileListAbsolute.txt
-/x64/Debug/VST3/include_juce_audio_plugin_client_VST3.obj
-/x64/Debug/VST3/resources.res
-/JuceLibraryCode/
+# Ignore everything:
+/*
+!GranularSynth.jucer
+!Source/
+!.gitignore
