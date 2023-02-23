@@ -48,10 +48,10 @@ void GranularPlayer::resized()
 {
     cursor.setBounds(getLocalBounds().withTrimmedBottom(getHeight() / 2));    
     settings.setBounds(getLocalBounds()
-        .withTrimmedTop((getHeight() / 2) * (1.01))
-        .withTrimmedLeft(getWidth() * 0.01)
-        .withTrimmedRight(getWidth() * 0.01)
-        .withTrimmedBottom(getWidth() * 0.01)
+        .withTrimmedTop((getHeight() / 2) * (1.025))
+        .withTrimmedLeft(getWidth() * 0.025)
+        .withTrimmedRight(getWidth() * 0.025)
+        .withTrimmedBottom(getWidth() * 0.025)
     );
 }
 

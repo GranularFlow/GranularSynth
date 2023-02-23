@@ -54,3 +54,7 @@ float Utils::samplesToPercent(int samplePosition, int totalSamples)
 void Utils::addToFb(FlexBox* fb, Component& c, int8 order, int minWidth,int minHeight) {
     fb->items.add(FlexItem(c).withMinWidth(minWidth).withMinHeight(minHeight).withMargin(0).withOrder(order));
 }
+
+void Utils::addToFb(FlexBox* fb, FlexBox& f, int8 order, int minWidth, int minHeight) {
+    fb->items.add(FlexItem(f).withMinWidth(minWidth).withMinHeight(minHeight).withMargin(0).withOrder(order));
+}

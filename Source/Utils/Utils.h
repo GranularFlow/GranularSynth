@@ -26,8 +26,8 @@ public:
     static int msToSamples(float, int);
     static float samplesToMs(int, int);
     static int secToSamples(float, int);
-    static void addToFb(FlexBox* fb, Component& c, int8 order, int minWidth, int minHeight);
-
+    static void addToFb(FlexBox*, Component&, int8, int, int);
+    static void addToFb(FlexBox*, FlexBox&, int8, int, int);
 private:
 
 };

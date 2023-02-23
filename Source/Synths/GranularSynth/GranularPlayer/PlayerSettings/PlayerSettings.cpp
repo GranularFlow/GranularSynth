@@ -22,7 +22,7 @@ PlayerSettings::~PlayerSettings()
 
 void PlayerSettings::initGui() {
     // GUI
-    for (int8 i = 0; i < 3; i++)
+    for (int8 i = 0; i < 2; i++)
     {
         separators.add(new Separator());
         addAndMakeVisible(separators.getLast());
@@ -52,8 +52,6 @@ void PlayerSettings::paint(Graphics& g) {
 
 void PlayerSettings::resized() {
 
-    int sectionWidth = (getWidth() * 0.9) / 4;
-    int sectionHeight = getHeight();
 
     FlexBox fb{
             FlexBox::Direction::row,
@@ -62,53 +60,66 @@ void PlayerSettings::resized() {
             FlexBox::AlignItems::flexStart,
             FlexBox::JustifyContent::spaceAround
     };
-    // First column    
-    FlexBox tmpFB = fb;
-    tmpFB.flexWrap = FlexBox::Wrap::wrap;
-    tmpFB.alignItems = FlexBox::AlignItems::center;
-    tmpFB.justifyContent = FlexBox::JustifyContent::center;
-    // Second column
-    FlexBox tmpFB2 = tmpFB;
-    tmpFB2.justifyContent = FlexBox::JustifyContent::spaceAround;
-    // Third column
-    FlexBox tmpFB3 = tmpFB;
-    tmpFB3.flexDirection = FlexBox::Direction::column;
 
-    int tmp_height = sectionHeight / 2;
-    int tmp_width = sectionWidth / 2;
-    tmpFB.items.add(FlexItem(granularModeRadioBox).withOrder(1).withMinWidth(tmp_width).withHeight(tmp_height));
-    tmpFB.items.add(FlexItem(runningModeRadioBox).withOrder(2).withMinWidth(tmp_width).withHeight(tmp_height));
-    tmpFB.items.add(FlexItem(midiModeRadioBox).withOrder(3).withMinWidth(tmp_width).withHeight(tmp_height));
-    tmpFB.items.add(FlexItem(windowTypeRadioBox).withOrder(4).withMinWidth(tmp_width).withHeight(tmp_height));
+    FlexBox tmpFB{
+            FlexBox::Direction::row,
+            FlexBox::Wrap::wrap,
+            FlexBox::AlignContent::center,
+            FlexBox::AlignItems::center,
+            FlexBox::JustifyContent::center
+    };
+
+    FlexBox tmpFB2{
+        FlexBox::Direction::row,
+        FlexBox::Wrap::noWrap,
+        FlexBox::AlignContent::center,
+        FlexBox::AlignItems::flexStart,
+        FlexBox::JustifyContent::spaceAround
+    };
+
+    FlexBox tmpFB3{
+        FlexBox::Direction::row,
+        FlexBox::Wrap::noWrap,
+        FlexBox::AlignContent::center,
+        FlexBox::AlignItems::flexStart,
+        FlexBox::JustifyContent::spaceAround
+    };
+
+    float sectionWidth = (getWidth() * 0.9) / 3;
+    float sectionHeight = getHeight();
+
+    float tmpHeight = sectionHeight / 2;
+    float tmpWidth = sectionWidth / 2;
+    Utils::addToFb(&tmpFB, granularModeRadioBox, 1, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB, runningModeRadioBox, 2, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB, midiModeRadioBox, 3, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB, windowTypeRadioBox, 4, tmpWidth, tmpHeight);
     // Add column to final flex box    
-    fb.items.add(FlexItem(tmpFB).withOrder(1).withMinWidth(sectionWidth).withHeight(sectionHeight));
+    Utils::addToFb(&fb, tmpFB, 1, sectionWidth, sectionHeight);
 
-    // Second column
-    tmp_height = sectionHeight / 2;
-    tmp_width = sectionWidth / 3;
-    tmpFB2.items.add(FlexItem(grainLengthKnob).withOrder(1).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    tmpFB2.items.add(FlexItem(grainPitchKnob).withOrder(2).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    tmpFB2.items.add(FlexItem(grainNumKnob).withOrder(3).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    tmpFB2.items.add(FlexItem(grainOffsetKnob).withOrder(4).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    //tmpFB2.items.add(FlexItem(cursorPositionKnob).withOrder(5).withMinWidth(tmp_width).withMinHeight(tmp_height));
-    // Add column to final flex box  
-    fb.items.add(FlexItem(tmpFB2).withOrder(3).withMinWidth(sectionWidth).withHeight(sectionHeight));
 
-    // Third column
-    tmp_height = sectionHeight / 2;
-    tmp_width = 100;
-    tmpFB3.items.add(FlexItem(volumeKnob).withOrder(1).withMinWidth(tmp_width).withHeight(tmp_height));
-    tmpFB3.items.add(FlexItem(panKnob).withOrder(2).withMinWidth(tmp_width).withHeight(tmp_height));
-    // Add column to final flex box
-    fb.items.add(FlexItem(tmpFB3).withOrder(5).withMinWidth(sectionWidth).withHeight(sectionHeight));
+    tmpHeight = sectionHeight;
+    sectionWidth = floor((2 /(float) 3) * (getWidth() / (float)6));
+    tmpWidth = sectionWidth;
+    Utils::addToFb(&tmpFB2, grainLengthKnob, 1, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB2, grainPitchKnob, 2, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB2, grainNumKnob, 3, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB2, grainOffsetKnob, 4, tmpWidth, tmpHeight);
+
+    
+    Utils::addToFb(&tmpFB3, volumeKnob, 1, tmpWidth, tmpHeight);
+    Utils::addToFb(&tmpFB3, panKnob, 2, tmpWidth, tmpHeight);
+
+    
+    Utils::addToFb(&fb, tmpFB2, 3, sectionWidth * 4, sectionHeight);
+    Utils::addToFb(&fb, tmpFB3, 5, sectionWidth * 2, sectionHeight);
 
 
     // White lines
-    for (int8 i = 0; i < 3; i++)
+    for (int8 i = 0; i < separators.size(); i++)
     {
-        fb.items.add(FlexItem(*separators[i]).withMinWidth(1).withHeight(sectionHeight).withOrder((i+1)*2));
+        Utils::addToFb(&fb, *separators[i], (i + 1) * 2, 1, sectionHeight);
     }
-
     fb.performLayout(getLocalBounds());
 }
 
